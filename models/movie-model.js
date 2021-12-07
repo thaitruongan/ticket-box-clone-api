@@ -30,7 +30,13 @@ const MovieSchema = new Schema({
   },
   runningTime: {
     type: Number,
-    required: [true, "Running time is required"]
+    required: [true, "Running time is required"],
+    validate:{
+        validator: function(rt){
+            return rt > 0
+        },
+        message: (props) =>`${props.value} must be greater than 0`
+    }
   },
 
   releaseDate: {
