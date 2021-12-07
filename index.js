@@ -5,6 +5,9 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
+const connectDB = require("./config/db");
+
+connectDB();
 
 const app = express();
 app.use(express.json());
@@ -17,33 +20,20 @@ app.use(
   })
 );
 
-//db connection
-const mongoose = require("mongoose");
+// const Banner = require("./models/banner-model");
+// const User = require("./models/user-model");
+// const banner = new Banner({
+//   image: "s",
+//   movieId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+//   releaseDate: new Date(),
+//   closeDate: new Date(),
+//   order: 0,
+//   createBy: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+// });
 
-main().catch((err) => console.log(err));
-
-async function main() {
-  await mongoose.connect(
-    "mongodb+srv://pntn070599:JTuZ9VwW7XYHUpq@ticket-box-clone.jzdht.mongodb.net/dev?retryWrites=true&w=majority"
-  );
-
-  console.log("Db connected");
-}
-
-const Banner = require("./models/banner-model");
-const User = require("./models/user-model");
-const banner = new Banner({
-  image: "s",
-  movieId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
-  releaseDate: new Date(),
-  closeDate: new Date(),
-  order: 0,
-  createBy: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
-});
-
-(async () => {
-  await banner.save();
-})();
+// (async () => {
+//   await banner.save();
+// })();
 
 // Connecting Routes
 
