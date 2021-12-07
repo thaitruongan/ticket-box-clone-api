@@ -35,20 +35,20 @@ app.use(
 //   await banner.save();
 // })();
 
-const Showtime = require("./models/showtime-model");
-const showtime = new Showtime({
-  movieId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
-  timeStart: new Date(),
-  roomId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
-  standardPrice: 50000,
-  vipPrice: 2000,
-  createBy: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
-});
+// const Showtime = require("./models/showtime-model");
+// const showtime = new Showtime({
+//   movieId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+//   timeStart: new Date(),
+//   roomId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+//   standardPrice: 50000,
+//   vipPrice: 2000,
+//   createBy: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+// });
 
-(async () => {
-  await showtime.save();
-  console.log(showtime);
-})();
+// (async () => {
+//   await showtime.save();
+//   console.log(showtime);
+// })();
 
 // Connecting Routes
 
