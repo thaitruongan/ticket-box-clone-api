@@ -25,6 +25,7 @@
     "express-fileupload": "^1.2.1",
     "mongoose": "^6.0.14",
     "morgan": "^1.10.0",
+    "node-cache": "^5.1.2",
     "path": "^0.12.7",
     "twilio": "^3.71.3"
   }

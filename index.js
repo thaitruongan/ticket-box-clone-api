@@ -52,9 +52,7 @@ app.use(
 
 // Connecting Routes
 
-app.get("/api", (req, res) => {
-  res.send("hihi");
-});
+app.use('/api/banner',require('./routes/banner-routes'));
 
 // const Movie = require('./models/movie-model')
 
