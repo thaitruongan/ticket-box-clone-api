@@ -24,6 +24,22 @@ app.get("/api", (req, res) => {
   res.send("hihi");
 });
 
+// const Movie = require('./models/movie-model')
+
+// const movie = new Movie({
+//     name:"SHANG-CHI AND THE LEGEND OF THE TEN RINGS 2",
+//     image:"hih.png1",
+//     trailer:"hihi.mp41",
+//     description:"hihi",
+//     label:"C13",
+//     runningTime:90,
+//     releaseDate:new Date("12-7-2021"),
+// });
+
+// (async ()=>{
+//     await movie.save()
+// })();
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   app.get("*", (req, res) => {
