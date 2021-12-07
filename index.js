@@ -5,6 +5,9 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
+const connectDB = require("./config/db");
+
+connectDB();
 
 const app = express();
 app.use(express.json());
@@ -16,21 +19,6 @@ app.use(
     useTempFiles: true,
   })
 );
-
-//db connection
-const mongoose = require("mongoose");
-
-main().catch((err) => console.log(err));
-
-async function main() {
-  await mongoose.connect(
-    "mongodb+srv://pntn070599:JTuZ9VwW7XYHUpq@ticket-box-clone.jzdht.mongodb.net/dev?retryWrites=true&w=majority"
-  );
-
-  console.log("Db connected");
-}
-
-// Connecting Routes
 
 app.get("/api", (req, res) => {
   res.send("hihi");
