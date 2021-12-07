@@ -9,6 +9,7 @@ const randomCode = (number) => {
   }
   return result;
 };
+
 client.messages
   .create({
     body: `Your verify code is: ${randomCode(4)}`,
