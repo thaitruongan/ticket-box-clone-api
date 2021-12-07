@@ -20,6 +20,23 @@ app.use(
   })
 );
 
+// const Banner = require("./models/banner-model");
+// const User = require("./models/user-model");
+// const banner = new Banner({
+//   image: "s",
+//   movieId: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+//   releaseDate: new Date(),
+//   closeDate: new Date(),
+//   order: 0,
+//   createBy: mongoose.Types.ObjectId("61ada1b13dcf152655396e6c"),
+// });
+
+// (async () => {
+//   await banner.save();
+// })();
+
+// Connecting Routes
+
 app.get("/api", (req, res) => {
   res.send("hihi");
 });
