@@ -9,9 +9,18 @@ const otpCache = new CacheController(300);
 const userController = {
   async List(req, res) {
     try {
-      const users = await UserModel.find();
-      res.status(200).json({ message: "successfully!", data: users });
+      let users = await cache.request(`list-user`);
+      if (!users) {
+        users = await UserModel.find();
+        console.log(typeof users);
+        cache.set(`list-user`, JSON.stringify(users));
+        return res.status(200).json({ message: "successfully!", data: users });
+      }
+      res
+        .status(200)
+        .json({ message: "successfully!", data: JSON.parse(users) });
     } catch (error) {
+      console.log(error);
       res.status(400).json({ message: "failure!", data: error.message });
     }
   },
@@ -103,10 +112,12 @@ const userController = {
 
     const updatedUser = await UserModel.findOneAndUpdate(
       { phoneNumber: phoneNumber },
-      update
+      update,
+      { new: true }
     );
 
     console.log(updatedUser);
+    cache.delete(`list-user`);
     res.status(200).json({
       message: "User update successfully!",
       data: {

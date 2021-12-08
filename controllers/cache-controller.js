@@ -9,14 +9,19 @@ class CacheController {
     });
   }
 
-  get(key, storeFunction) {
+  get(key, storeFunction, model = null) {
     const value = this.cache.get(key);
     if (value) {
       console.log(`Retrieving ${key} from cache`);
       return Promise.resolve(value);
     }
+    if (model === null)
+      return storeFunction().then((result) => {
+        this.cache.set(key, result);
+        return result;
+      });
 
-    return storeFunction().then((result) => {
+    return model.storeFunction().then((result) => {
       this.cache.set(key, result);
       return result;
     });
@@ -29,7 +34,7 @@ class CacheController {
 
   request(key) {
     const value = this.cache.get(key);
-    console.log(key, value);
+    console.log("request: ", key, value);
     if (value) {
       console.log(`Retrieving ${key} from cache`);
       return Promise.resolve(value);
