@@ -1,30 +1,42 @@
-const Movie = require('../models/movie-model')
+const Seat = require('../models/seat-model')
 const mongoose = require("mongoose");
 
-const movieController = {
+const seatController = {
     list:async(req,res) =>{
         try{
             
-            const movies = await Movie.find()
+            const seat = await Seat.aggregate([
+                {
+                    $lookup:{
+                    from:"rooms",
+                    localField:"roomId",
+                    foreignField: "_id",
+                    as:"room_info"
+                }
+                },{
+                    $unwind:"$room_info"
+                }
+            ])
             res.status(200).json({
                 message:"Success",
-                data: movies
+                data: seat
             })
         }catch(err){
+            console.log(err)
             res.status(400).json(err)
         }
     },
     getById:async(req,res) =>{
         try{
-            const movie = await Movie.findById(req.params.id)
-            if(!movie){
+            const seat = await Seat.findById(req.params.id)
+            if(!seat){
                 return res.status(404).json({
-                    message:"Movie Not Found!"
+                    message:"Seat Not Found!"
                 });
             }
             return res.status(200).json({
                 message:"Success",
-                data: movie
+                data: seat
             });
             
         }catch(err){
@@ -32,12 +44,16 @@ const movieController = {
         }
     },
     create:async(req,res) =>{
-        const newMovie = new Movie(req.body);
-        newMovie.createdBy = mongoose.Types.ObjectId(req.user.id)
+        const newSeat = new Seat(req.body);
+        newSeat.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
         try{
-            const saveMovie = await newMovie.save();
-            res.status(200).json(saveMovie);
+            const saveSeat = await newSeat.save();
+            res.status(200).json({
+                message:"Success",
+                data: saveSeat
+            });
         }catch(err){
+            console.log(err)
             res.status(400).json({
                 message:"Failed",
                 error:err
@@ -46,15 +62,14 @@ const movieController = {
     },
     update:async(req,res)=>{
         try{
-            const movie = await Movie.findById(req.params.id);
-            if(!movie){
+            const seat = await Seat.findById(req.params.id);
+            if(!seat){
                 return res.status(404).send({
-                    message:"Movie Not Found!"
+                    message:"Seat Not Found!"
                 }); 
             }else{
                 try{
-                    let version = movie.version;
-                    const updateMovie = await Movie.findByIdAndUpdate(
+                    const updateSeat = await Seat.findByIdAndUpdate(
                         req.params.id,
                         {
                             $set:req.body
@@ -63,7 +78,7 @@ const movieController = {
                     );
                     res.status(200).json({
                         message:"Success",
-                        data:updateMovie
+                        data:updateSeat
                     })
                 }catch(err){
                     res.status(500).json({
@@ -81,16 +96,16 @@ const movieController = {
     },
     delete:async(req,res)=>{
         try{
-            const movie = await Movie.findById(req.params.id);
-            if(!movie){
+            const seat = await Seat.findById(req.params.id);
+            if(!seat){
                 return res.status(404).send({
-                    message:"Movie Not Found!"
+                    message:"Seat Not Found!"
                 }); 
             }else{
                 try{
-                    await movie.delete();
+                    await seat.delete();
                     res.status(200).json({
-                        message:"Success! Movie has been deleted"                        
+                        message:"Success! Seat has been deleted"                        
                     })
                 }catch(err){
                     res.status(500).json({
@@ -105,27 +120,7 @@ const movieController = {
                 error:err
             })
         }
-    },
-    search:async(req,res,next)=>{
-        try{
-            let {name} = req.body;
-            console.log(name)
-            const movies = await Movie.find({
-                name:{
-                    $regex: name
-                }
-            })
-            res.status(200).json({
-                message:"Success",
-                data:movies
-            })
-        }catch(err){
-            res.status(400).json({
-                message:"Failed",
-                error:err
-            })
-        }
-    }
+    }    
 }
 
-module.exports = movieController
+module.exports = seatController

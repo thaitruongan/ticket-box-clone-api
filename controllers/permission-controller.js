@@ -6,14 +6,10 @@ const permissionController = {
         try{
             
             const permissions = await Permission.find()
-            if(!permissions){
-                res.status(200).json({
-                    message:"Success",
-                    data: permissions
-                })
-            }else{
-                res.status(200).json("No permissions have been created yet")
-            }
+            res.status(200).json({
+                message:"Success",
+                data: permissions
+            })
         }catch(err){
             res.status(400).json(err)
         }
@@ -26,7 +22,7 @@ const permissionController = {
                     message:"Permission Not Found!"
                 });
             }
-            return req.status(200).json({
+            return res.status(200).json({
                 message:"Success",
                 data: permission
             });

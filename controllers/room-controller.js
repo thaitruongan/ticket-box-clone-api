@@ -1,14 +1,14 @@
-const Movie = require('../models/movie-model')
+const Room = require('../models/room-model')
 const mongoose = require("mongoose");
 
-const movieController = {
+const roomController = {
     list:async(req,res) =>{
         try{
             
-            const movies = await Movie.find()
+            const rooms = await Room.find()
             res.status(200).json({
                 message:"Success",
-                data: movies
+                data: rooms
             })
         }catch(err){
             res.status(400).json(err)
@@ -16,27 +16,31 @@ const movieController = {
     },
     getById:async(req,res) =>{
         try{
-            const movie = await Movie.findById(req.params.id)
-            if(!movie){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).json({
-                    message:"Movie Not Found!"
+                    message:"Room Not Found!"
                 });
             }
             return res.status(200).json({
                 message:"Success",
-                data: movie
+                data: room
             });
             
         }catch(err){
+            console.log(err)
             res.status(400).json(err)
         }
     },
     create:async(req,res) =>{
-        const newMovie = new Movie(req.body);
-        newMovie.createdBy = mongoose.Types.ObjectId(req.user.id)
+        const newRoom = new Room(req.body);
+        newRoom.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
         try{
-            const saveMovie = await newMovie.save();
-            res.status(200).json(saveMovie);
+            const saveRoom = await newRoom.save();
+            res.status(200).json({
+                message:"Success",
+                data: saveRoom
+            });
         }catch(err){
             res.status(400).json({
                 message:"Failed",
@@ -46,15 +50,14 @@ const movieController = {
     },
     update:async(req,res)=>{
         try{
-            const movie = await Movie.findById(req.params.id);
-            if(!movie){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).send({
-                    message:"Movie Not Found!"
+                    message:"Room Not Found!"
                 }); 
             }else{
                 try{
-                    let version = movie.version;
-                    const updateMovie = await Movie.findByIdAndUpdate(
+                    const updateRoom = await Room.findByIdAndUpdate(
                         req.params.id,
                         {
                             $set:req.body
@@ -63,7 +66,7 @@ const movieController = {
                     );
                     res.status(200).json({
                         message:"Success",
-                        data:updateMovie
+                        data:updateRoom
                     })
                 }catch(err){
                     res.status(500).json({
@@ -81,16 +84,16 @@ const movieController = {
     },
     delete:async(req,res)=>{
         try{
-            const movie = await Movie.findById(req.params.id);
-            if(!movie){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).send({
-                    message:"Movie Not Found!"
+                    message:"Room Not Found!"
                 }); 
             }else{
                 try{
-                    await movie.delete();
+                    await room.delete();
                     res.status(200).json({
-                        message:"Success! Movie has been deleted"                        
+                        message:"Success! Room has been deleted"                        
                     })
                 }catch(err){
                     res.status(500).json({
@@ -105,27 +108,7 @@ const movieController = {
                 error:err
             })
         }
-    },
-    search:async(req,res,next)=>{
-        try{
-            let {name} = req.body;
-            console.log(name)
-            const movies = await Movie.find({
-                name:{
-                    $regex: name
-                }
-            })
-            res.status(200).json({
-                message:"Success",
-                data:movies
-            })
-        }catch(err){
-            res.status(400).json({
-                message:"Failed",
-                error:err
-            })
-        }
-    }
+    }    
 }
 
-module.exports = movieController
+module.exports = roomController

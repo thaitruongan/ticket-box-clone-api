@@ -55,7 +55,10 @@ app.use("/api/banner", require("./routes/banner-routes"));
 app.use("/api/user", require("./routes/user-routes"));
 app.use("/api/movie", require("./routes/movie-routes"));
 app.use("/api/permission", require("./routes/permission-routes"));
+app.use('/api/room',require('./routes/room-routes'));
+app.use('/api/seat',require('./routes/seat-routes'));
 app.use('/api/upload',require('./routes/upload-routes'));
+
 // const Movie = require('./models/movie-model')
 
 // const movie = new Movie({

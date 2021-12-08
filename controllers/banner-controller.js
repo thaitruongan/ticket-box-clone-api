@@ -5,7 +5,19 @@ const mongoose = require("mongoose");
 const bannerController = {
     list:async(req,res) =>{
         try{
-            const banners = await Banner.find()
+            const banners = await Banner.aggregate([
+                {
+                    $lookup:{
+                    from:"movies",
+                    localField:"movieId",
+                    foreignField: "_id",
+                    as:"movie_info"
+                }
+                },{
+                    $unwind:"$movie_info"
+                }
+            ])
+            console.log(banners)
             res.status(200).json({
                 message:"Success",
                 data: banners
@@ -22,7 +34,7 @@ const bannerController = {
                     message:"Banner Not Found!"
                 });
             }
-            return req.status(200).json({
+            return res.status(200).json({
                 message:"Success",
                 data: banner
             });
