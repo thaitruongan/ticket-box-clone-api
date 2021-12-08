@@ -25,13 +25,11 @@ const UserSchema = new Schema({
 
   name: {
     type: String,
-    required: [true, "Name is required"],
     maxlength: 50,
   },
 
   birth: {
     type: Date,
-    required: [true, "Birth date is required"],
   },
 
   sex: {
@@ -99,11 +97,6 @@ const UserSchema = new Schema({
         log: "Account was created",
       },
     ],
-  },
-
-  activate: {
-    type: String,
-    default: "Created",
   },
 });
 

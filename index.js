@@ -52,7 +52,8 @@ app.use(
 
 // Connecting Routes
 
-app.use('/api/banner',require('./routes/banner-routes'));
+app.use("/api/banner", require("./routes/banner-routes"));
+app.use("/api/user", require("./routes/user-routes"));
 
 // const Movie = require('./models/movie-model')
 

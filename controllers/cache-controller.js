@@ -48,4 +48,4 @@ class CacheController {
 }
 
 const cache = new CacheController(604800);
-module.exports = cache;
+module.exports = { cache, CacheController };
