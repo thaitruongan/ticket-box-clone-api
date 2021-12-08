@@ -54,7 +54,7 @@ app.use(
 
 app.use("/api/banner", require("./routes/banner-routes"));
 app.use("/api/user", require("./routes/user-routes"));
-
+app.use("/api/movie", require("./routes/movie-routes"));
 // const Movie = require('./models/movie-model')
 
 // const movie = new Movie({
