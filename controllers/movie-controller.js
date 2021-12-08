@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const movieController = {
     list:async(req,res) =>{
         try{
+            
             const movies = await Movie.find()
             if(!movies){
                 res.status(200).json({
@@ -35,9 +36,8 @@ const movieController = {
         }
     },
     create:async(req,res) =>{
-        const {createBy} = req.body
         const newMovie = new Movie(req.body);
-        newMovie.createdBy = mongoose.Types.ObjectId(createBy)
+        newMovie.createdBy = mongoose.Types.ObjectId(req.user.id)
         try{
             const saveMovie = await newMovie.save();
             res.status(200).json(saveMovie);
@@ -57,6 +57,7 @@ const movieController = {
                 }); 
             }else{
                 try{
+                    let version = movie.version;
                     const updateMovie = await Movie.findByIdAndUpdate(
                         req.params.id,
                         {
