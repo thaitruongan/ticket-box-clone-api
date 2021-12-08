@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const bannerController = require("../controllers/banner-controllers");
+const bannerController = require("../controllers/banner-controller");
 
 router.post('/', bannerController.create);
 router.put('/:id',bannerController.update);
