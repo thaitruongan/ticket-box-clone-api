@@ -14,28 +14,30 @@ const UserSchema = new Schema({
 
   email: {
     type: String,
-    unique: true,
     lowercase: true,
     trim: true,
     match: [
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Email not valid",
     ],
+    default: null,
   },
 
   name: {
     type: String,
     maxlength: 50,
+    default: null,
   },
 
   birth: {
     type: Date,
+    default: null,
   },
 
   sex: {
     type: String,
-    default: "male",
-    enum: ["male", "female"],
+    default: null,
+    enum: ["male", "female", null],
   },
 
   avatar: {
@@ -97,6 +99,11 @@ const UserSchema = new Schema({
         log: "Account was created",
       },
     ],
+  },
+
+  isAlive: {
+    type: Boolean,
+    default: true,
   },
 });
 

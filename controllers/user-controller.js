@@ -1,63 +1,65 @@
 const UserModel = require("../models/user-model");
-const { CacheController } = require("../controllers/cache-controller");
+const { cache, CacheController } = require("../controllers/cache-controller");
 const sendOTP = require("./sendOTP");
+const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
 const otpCache = new CacheController(300);
 
 const userController = {
-  async LoginByPhone(req, res) {
-    const { phoneNumber } = req.body;
-    const user = await UserModel.findOne({
-      phoneNumber: phoneNumber,
-    });
-    //register
-    if (user === null) return UserController.register(phoneNumber, res);
-
-    if (user.activate !== "activated")
-      return res.status(400).json({ message: "Active your account first" });
-    const userId = user._id.toString();
-    const randomString = sendOTP.randomCode(4);
+  async List(req, res) {
     try {
-      await sendOTP.sendOTP(randomString, phoneNumber);
-      otpCache.set(`otp${userId}`, randomString);
-      console.log(otpCache.request(`otp${userId}`));
-      return res
-        .status(200)
-        .json({ message: "success!", data: "cho nhap cai otp" });
+      const users = await UserModel.find();
+      res.status(200).json({ message: "successfully!", data: users });
     } catch (error) {
-      return res.status(400).json({ message: "failure!", data: error.message });
+      res.status(400).json({ message: "failure!", data: error.message });
     }
   },
 
-  async register(phone, res) {
+  async LoginByPhone(req, res) {
+    const { phoneNumber } = req.body;
+    let user = await UserModel.findOne({
+      phoneNumber: phoneNumber,
+    });
+    //register
     const randomString = sendOTP.randomCode(4);
-    const randomId = sendOTP.randomCode(15);
     try {
       await sendOTP.sendOTP(randomString, phoneNumber);
-      otpCache.set(`otp${randomId}`, randomString);
-      console.log(otpCache.request(`otp${userId}`));
+      otpCache.set(`otp${phoneNumber}`, randomString);
+      console.log(otpCache.request(`otp${phoneNumber}`));
       return res
         .status(200)
         .json({ message: "success!", data: "cho nhap cai otp" });
     } catch (error) {
+      console.log(error);
       return res.status(400).json({ message: "failure!", data: error.message });
     }
   },
 
   async VerifyOTP(req, res) {
     const { otp, phoneNumber } = req.body;
-    const user = await UserModel.findOne({ phoneNumber: phoneNumber });
-    if (user === null)
-      return res.status(400).json({ message: "user not found!" });
+    let user = await UserModel.findOne({ phoneNumber: phoneNumber });
+    if (user === null) {
+      user = new UserModel({ phoneNumber: phoneNumber });
+      if (user === undefined)
+        return res.status(400).json({ message: "Invalid OTP!" });
 
+      console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
+      if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
+        return res
+          .status(400)
+          .json({ message: "OTP was expired or not true!" });
+      user.save();
+    } else {
+      console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
+      if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
+        return res.status(400).json({ message: "OTP was expired!" });
+    }
     const userId = user._id.toString();
-    console.log(await otpCache.request(`otp${userId}`), "hihi");
-    if (otp + "" !== (await otpCache.request(`otp${userId}`)))
-      return res.status(400).json({ message: "OTP was expired!" });
-
+    console.log(userId, user.phoneNumber);
     const token = userController.generateToken(userId, user.phoneNumber);
-    otpCache.delete(`otp${userId}`);
+    otpCache.delete(`otp${phoneNumber}`);
+    cache.set(`user${phoneNumber}`, token);
     res.status(200).json({
       message: "success!",
       token: token,
@@ -69,6 +71,53 @@ const userController = {
       },
     });
   },
+
+  async Update(req, res) {
+    if (!req.user)
+      return res.status(400).json({ message: "failure!", data: null });
+    const { phoneNumber, email, name, birth, sex, avatar } = req.body;
+
+    const user = await UserModel.findOne({
+      _id: mongoose.Types.ObjectId(req.user.id),
+      phoneNumber: phoneNumber,
+    });
+    if (user === null)
+      return res.status(400).json({
+        message: "failure!",
+        data: "You have not permission to update this user",
+      });
+    let version = user.version;
+    const update = {
+      email: email,
+      name: name,
+      birth: new Date(birth),
+      sex: sex,
+      avatar: avatar,
+      version: version + 1,
+      updatedAt: new Date(),
+      updatedBy: req.user.id,
+      $push: {
+        oldVersion: user,
+      },
+    };
+
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { phoneNumber: phoneNumber },
+      update
+    );
+
+    console.log(updatedUser);
+    res.status(200).json({
+      message: "User update successfully!",
+      data: {
+        name: updatedUser.name,
+        sex: updatedUser.sex,
+        avatar: updatedUser.avatar,
+        birth: updatedUser.birth,
+      },
+    });
+  },
+
   generateToken(id, phone) {
     return jwt.sign(
       {
