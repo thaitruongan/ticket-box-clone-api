@@ -34,7 +34,7 @@ const roomController = {
     },
     create:async(req,res) =>{
         const newRoom = new Room(req.body);
-        newRoom.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
+        newRoom.createdBy = mongoose.Types.ObjectId(req.user.id)
         try{
             const saveRoom = await newRoom.save();
             res.status(200).json({

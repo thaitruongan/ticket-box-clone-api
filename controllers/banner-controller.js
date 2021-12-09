@@ -44,10 +44,8 @@ const bannerController = {
     }
   },
   create: async (req, res) => {
-    const { createBy } = req.body;
-    console.log(createBy);
     const newBanner = new Banner(req.body);
-    newBanner.createdBy = mongoose.Types.ObjectId(createBy);
+    newBanner.createdBy = mongoose.Types.ObjectId(req.user.id);
     try {
       const saveBanner = await newBanner.save();
       res.status(200).json(saveBanner);
