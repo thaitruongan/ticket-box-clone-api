@@ -44,8 +44,8 @@ const seatController = {
         }
     },
     create:async(req,res) =>{
+        req.body.createBy = req.user.id;
         const newSeat = new Seat(req.body);
-        newSeat.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
         try{
             const saveSeat = await newSeat.save();
             res.status(200).json({

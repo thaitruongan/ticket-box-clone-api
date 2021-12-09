@@ -1,9 +1,11 @@
 const router = require('express').Router()
 const permissionController = require("../controllers/permission-controller");
+const Auth = require("../middlewares/auth");
 
-router.post('/', permissionController.create);
-router.delete('/:id',permissionController.delete);
-router.get('/:id',permissionController.getById);
-router.get('/',permissionController.list);
+
+router.post('/', Auth.authentication,permissionController.create);
+router.delete('/:id',Auth.authentication,permissionController.delete);
+router.get('/:id',Auth.authentication,permissionController.getById);
+router.get('/',Auth.authentication,permissionController.list);
 
 module.exports = router

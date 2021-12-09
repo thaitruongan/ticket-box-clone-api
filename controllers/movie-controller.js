@@ -30,8 +30,8 @@ const movieController = {
     }
   },
   create: async (req, res) => {
+    req.body.createBy = req.user.id;
     const newMovie = new Movie(req.body);
-    newMovie.createdBy = mongoose.Types.ObjectId(req.user.id);
     try {
       const saveMovie = await newMovie.save();
       res.status(200).json(saveMovie);

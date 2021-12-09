@@ -49,7 +49,6 @@ const uploadController = {
             if(err){
                 return res.json({success:false,err});
             }
-            console.log(res.req.file,"hihi")
             return res.json({success:true, url: res.req.file.path, fileName: res.req.file.filename})
         });
     },
