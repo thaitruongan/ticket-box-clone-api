@@ -12,7 +12,7 @@ const TicketSchema = new Schema({
   },
   status: {
     type: String,
-    required: [true, "Status is required"],
+    default: "free",
   },
   userId: {
     type: Schema.Types.ObjectId,
