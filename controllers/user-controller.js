@@ -104,7 +104,7 @@ const userController = {
       avatar: avatar,
       version: version + 1,
       updatedAt: new Date(),
-      updatedBy: req.user.id,
+      updatedBy: mongoose.Types.ObjectId,
       $push: {
         oldVersion: user,
       },
