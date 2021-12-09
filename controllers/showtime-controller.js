@@ -62,10 +62,8 @@ const ShowtimeController = {
 
   async Create(req, res) {
     try {
-      const userId = req.user.id;
-      console.log(req.body);
+      req.body.createBy = req.user.id;
       let showtime = new ShowtimeModel(req.body);
-      showtime.createBy = mongoose.Types.ObjectId(userId);
       showtime.timeStart = new Date(req.body.timeStart);
 
       await showtime.save();

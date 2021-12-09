@@ -32,8 +32,8 @@ const permissionController = {
         }
     },
     create:async(req,res) =>{
+        req.body.createBy = req.user.id;
         const newPermission = new Permission(req.body);
-        newPermission.createdBy = mongoose.Types.ObjectId(req.user.id)
         try{
             const newPermission = await newPermission.save();
             res.status(200).json({
