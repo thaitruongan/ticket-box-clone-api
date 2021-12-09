@@ -95,17 +95,10 @@ const seatController = {
                     message:"Seat Not Found!"
                 }); 
             }else{
-                try{
-                    await seat.delete();
-                    res.status(200).json({
-                        message:"Success! Seat has been deleted"                        
-                    })
-                }catch(err){
-                    res.status(500).json({
-                        message:"Failed",
-                        error:err
-                    })
-                }
+                await seat.delete();
+                res.status(200).json({
+                    message:"Success! Seat has been deleted"                        
+                })
             }
         }catch(err){
             res.status(400).json({
