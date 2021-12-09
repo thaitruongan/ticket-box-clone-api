@@ -46,39 +46,47 @@ const userController = {
   },
 
   async VerifyOTP(req, res) {
-    const { otp, phoneNumber } = req.body;
-    let user = await UserModel.findOne({ phoneNumber: phoneNumber });
-    if (user === null) {
-      user = new UserModel({ phoneNumber: phoneNumber });
-      if (user === undefined)
-        return res.status(400).json({ message: "Invalid OTP!" });
+    try {
+      const { otp, phoneNumber } = req.body;
+      let user = await UserModel.findOne({ phoneNumber: phoneNumber });
+      if (user === null) {
+        user = new UserModel({ phoneNumber: phoneNumber });
+        if (user === undefined)
+          return res.status(400).json({ message: "Invalid OTP!" });
 
-      console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
-      if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
-        return res
-          .status(400)
-          .json({ message: "OTP was expired or not true!" });
-      user.save();
-    } else {
-      console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
-      if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
-        return res.status(400).json({ message: "OTP was expired!" });
+        console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
+        if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
+          return res
+            .status(400)
+            .json({ message: "OTP was expired or not true!" });
+        user.save();
+      } else {
+        console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
+        if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
+          return res.status(400).json({ message: "OTP was expired!" });
+      }
+
+      if (!user.isAlive)
+        return res.status(400).json({ message: "You got banned", data: null });
+
+      const userId = user._id.toString();
+      console.log(userId, user.phoneNumber);
+      const token = userController.generateToken(userId, user.phoneNumber);
+      otpCache.delete(`otp${phoneNumber}`);
+      cache.set(`user${phoneNumber}`, token);
+      res.status(200).json({
+        message: "success!",
+        token: token,
+        data: {
+          name: user.name,
+          sex: user.sex,
+          avatar: user.avatar,
+          birth: user.birth,
+        },
+      });
+    } catch (error) {
+      res.status(400).send({ message: "fail", error: error });
     }
-    const userId = user._id.toString();
-    console.log(userId, user.phoneNumber);
-    const token = userController.generateToken(userId, user.phoneNumber);
-    otpCache.delete(`otp${phoneNumber}`);
-    cache.set(`user${phoneNumber}`, token);
-    res.status(200).json({
-      message: "success!",
-      token: token,
-      data: {
-        name: user.name,
-        sex: user.sex,
-        avatar: user.avatar,
-        birth: user.birth,
-      },
-    });
   },
 
   async Update(req, res) {

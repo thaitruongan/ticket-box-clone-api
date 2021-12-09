@@ -44,10 +44,8 @@ const bannerController = {
     }
   },
   create: async (req, res) => {
-    const { createBy } = req.body;
-    console.log(createBy);
+    req.body.createBy = req.user.id;
     const newBanner = new Banner(req.body);
-    newBanner.createdBy = mongoose.Types.ObjectId(createBy);
     try {
       const saveBanner = await newBanner.save();
       res.status(200).json(saveBanner);
@@ -59,25 +57,35 @@ const bannerController = {
     }
   },
   update: async (req, res) => {
+    const { id } = req.params;
+    const { image, movieId, order } = req.body;
     try {
-      const banner = await Banner.findById(req.params.id);
+      const banner = await Banner.findById(id);
       if (!banner) {
         return res.status(404).send({
           message: "Banner Not Found!",
         });
-      } else {
-        const updateBanner = await Banner.findByIdAndUpdate(
-          req.params.id,
-          {
-            $set: req.body,
-          },
-          { new: true }
-        );
-        res.status(200).json({
-          message: "Success",
-          data: updateBanner,
-        });
       }
+      let version = banner.version;
+      let update = {
+        image: image,
+        movieId: movieId,
+        order: order,
+        version: version + 1,
+        updateBy: req.user.id,
+        $push: {
+          oldVersion: banner,
+        },
+      };
+      const updateBanner = await Banner.findByIdAndUpdate(
+        req.params.id,
+        update,
+        { new: true }
+      );
+      res.status(200).json({
+        message: "Success",
+        data: updateBanner,
+      });
     } catch (err) {
       res.status(400).json({
         message: "Failed",

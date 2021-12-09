@@ -11,14 +11,6 @@ const BannerSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: [true, "Movie id is required"],
   },
-  releaseDate: {
-    type: Date,
-    required: [true, "Release date is required"],
-  },
-  closeDate: {
-    type: Date,
-    required: [true, "Close date is required"],
-  },
   order: {
     type: Number,
     default: -1,
