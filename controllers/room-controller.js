@@ -56,24 +56,17 @@ const roomController = {
                     message:"Room Not Found!"
                 }); 
             }else{
-                try{
-                    const updateRoom = await Room.findByIdAndUpdate(
-                        req.params.id,
-                        {
-                            $set:req.body
-                        },
-                        {new:true}
-                    );
-                    res.status(200).json({
-                        message:"Success",
-                        data:updateRoom
-                    })
-                }catch(err){
-                    res.status(500).json({
-                        message:"Failed",
-                        error:err
-                    })
-                }
+                const updateRoom = await Room.findByIdAndUpdate(
+                    req.params.id,
+                    {
+                        $set:req.body
+                    },
+                    {new:true}
+                );
+                res.status(200).json({
+                    message:"Success",
+                    data:updateRoom
+                })
             }
         }catch(err){
             res.status(400).json({
@@ -90,17 +83,10 @@ const roomController = {
                     message:"Room Not Found!"
                 }); 
             }else{
-                try{
-                    await room.delete();
-                    res.status(200).json({
-                        message:"Success! Room has been deleted"                        
-                    })
-                }catch(err){
-                    res.status(500).json({
-                        message:"Failed",
-                        error:err
-                    })
-                }
+                await room.delete();
+                res.status(200).json({
+                    message:"Success! Room has been deleted"                        
+                })
             }
         }catch(err){
             res.status(400).json({

@@ -4,12 +4,10 @@ const { Schema } = mongoose;
 const SeatSchema = new Schema({
   row: {
     type:String,
-    unique:true,
     require:[true,"Row is require"]
   },
   column:{
       type:Number,
-      unique:true,
       require:[true,"Column is require"],
       validate:{
         validator: function(c){
@@ -17,11 +15,14 @@ const SeatSchema = new Schema({
         },
         message: (props) =>`${props.value} must be greater than 0`
     }
-
   },
   isVip:{
       type:Boolean,
       default:"false",
+  },
+  isAvailable:{
+      type:Boolean,
+      default:"true"
   },
   roomId:{
       type:Schema.Types.ObjectId,
