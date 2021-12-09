@@ -68,24 +68,17 @@ const seatController = {
                     message:"Seat Not Found!"
                 }); 
             }else{
-                try{
-                    const updateSeat = await Seat.findByIdAndUpdate(
-                        req.params.id,
-                        {
-                            $set:req.body
-                        },
-                        {new:true}
-                    );
-                    res.status(200).json({
-                        message:"Success",
-                        data:updateSeat
-                    })
-                }catch(err){
-                    res.status(500).json({
-                        message:"Failed",
-                        error:err
-                    })
-                }
+                const updateSeat = await Seat.findByIdAndUpdate(
+                    req.params.id,
+                    {
+                        $set:req.body
+                    },
+                    {new:true}
+                );
+                res.status(200).json({
+                    message:"Success",
+                    data:updateSeat
+                })
             }
         }catch(err){
             res.status(400).json({

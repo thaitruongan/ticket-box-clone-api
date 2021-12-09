@@ -66,24 +66,17 @@ const bannerController = {
                     message:"Banner Not Found!"
                 }); 
             }else{
-                try{
-                    const updateBanner = await Banner.findByIdAndUpdate(
-                        req.params.id,
-                        {
-                            $set:req.body
-                        },
-                        {new:true}
-                    );
-                    res.status(200).json({
-                        message:"Success",
-                        data:updateBanner
-                    })
-                }catch(err){
-                    res.status(500).json({
-                        message:"Failed",
-                        error:err
-                    })
-                }
+                const updateBanner = await Banner.findByIdAndUpdate(
+                    req.params.id,
+                    {
+                        $set:req.body
+                    },
+                    {new:true}
+                );
+                res.status(200).json({
+                    message:"Success",
+                    data:updateBanner
+                })
             }
         }catch(err){
             res.status(400).json({
