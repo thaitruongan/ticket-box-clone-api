@@ -5,14 +5,10 @@ const movieController = {
   list: async (req, res) => {
     try {
       const movies = await Movie.find();
-      if (!movies) {
-        res.status(200).json({
-          message: "Success",
-          data: movies,
-        });
-      } else {
-        res.status(200).json("No movies have been created yet");
-      }
+      res.status(200).json({
+        message: "Success",
+        data: movies,
+      });
     } catch (err) {
       res.status(400).json(err);
     }
@@ -25,7 +21,7 @@ const movieController = {
           message: "Movie Not Found!",
         });
       }
-      return req.status(200).json({
+      return res.status(200).json({
         message: "Success",
         data: movie,
       });
@@ -34,9 +30,8 @@ const movieController = {
     }
   },
   create: async (req, res) => {
-    const { createBy } = req.body;
     const newMovie = new Movie(req.body);
-    newMovie.createdBy = mongoose.Types.ObjectId(createBy);
+    newMovie.createdBy = mongoose.Types.ObjectId(req.user.id);
     try {
       const saveMovie = await newMovie.save();
       res.status(200).json(saveMovie);
@@ -49,14 +44,14 @@ const movieController = {
   },
   update: async (req, res) => {
     try {
-      const movie = await movie.findById(req.params.id);
+      const movie = await Movie.findById(req.params.id);
       if (!movie) {
         return res.status(404).send({
           message: "Movie Not Found!",
         });
       }
-
-      // this scope is already in try block
+      //this scope is already in try block
+      let version = movie.version;
       const updateMovie = await Movie.findByIdAndUpdate(
         req.params.id,
         {
@@ -83,7 +78,6 @@ const movieController = {
           message: "Movie Not Found!",
         });
       }
-
       await movie.delete();
       res.status(200).json({
         message: "Success! Movie has been deleted",

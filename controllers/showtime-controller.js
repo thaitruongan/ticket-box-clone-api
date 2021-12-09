@@ -1,5 +1,6 @@
 const ShowtimeModel = require("../models/showtime-model");
 const TicketController = require("./ticket-controller");
+const mongoose = require("mongoose");
 
 const ShowtimeController = {
   async Create(req, res) {
@@ -7,7 +8,7 @@ const ShowtimeController = {
       const userId = req.user.id;
 
       let showtime = new ShowtimeModel(req, body);
-      showtime.createBy = userId;
+      showtime.createBy = mongoose.Types.ObjectId(userId);
 
       await showtime.save();
 

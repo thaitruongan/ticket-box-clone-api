@@ -1,26 +1,14 @@
-const Banner = require('../models/banner-model');
-
+const Room = require('../models/room-model')
 const mongoose = require("mongoose");
 
-const bannerController = {
+const roomController = {
     list:async(req,res) =>{
         try{
-            const banners = await Banner.aggregate([
-                {
-                    $lookup:{
-                    from:"movies",
-                    localField:"movieId",
-                    foreignField: "_id",
-                    as:"movie_info"
-                }
-                },{
-                    $unwind:"$movie_info"
-                }
-            ])
-            console.log(banners)
+            
+            const rooms = await Room.find()
             res.status(200).json({
                 message:"Success",
-                data: banners
+                data: rooms
             })
         }catch(err){
             res.status(400).json(err)
@@ -28,29 +16,31 @@ const bannerController = {
     },
     getById:async(req,res) =>{
         try{
-            const banner = await Banner.findById(req.params.id)
-            if(!banner){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).json({
-                    message:"Banner Not Found!"
+                    message:"Room Not Found!"
                 });
             }
             return res.status(200).json({
                 message:"Success",
-                data: banner
+                data: room
             });
             
         }catch(err){
+            console.log(err)
             res.status(400).json(err)
         }
     },
     create:async(req,res) =>{
-        const {createBy} = req.body
-        console.log(createBy)
-        const newBanner = new Banner(req.body);
-        newBanner.createdBy = mongoose.Types.ObjectId(createBy)
+        const newRoom = new Room(req.body);
+        newRoom.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
         try{
-            const saveBanner = await newBanner.save();
-            res.status(200).json(saveBanner);
+            const saveRoom = await newRoom.save();
+            res.status(200).json({
+                message:"Success",
+                data: saveRoom
+            });
         }catch(err){
             res.status(400).json({
                 message:"Failed",
@@ -60,14 +50,14 @@ const bannerController = {
     },
     update:async(req,res)=>{
         try{
-            const banner = await Banner.findById(req.params.id);
-            if(!banner){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).send({
-                    message:"Banner Not Found!"
+                    message:"Room Not Found!"
                 }); 
             }else{
                 try{
-                    const updateBanner = await Banner.findByIdAndUpdate(
+                    const updateRoom = await Room.findByIdAndUpdate(
                         req.params.id,
                         {
                             $set:req.body
@@ -76,7 +66,7 @@ const bannerController = {
                     );
                     res.status(200).json({
                         message:"Success",
-                        data:updateBanner
+                        data:updateRoom
                     })
                 }catch(err){
                     res.status(500).json({
@@ -94,16 +84,16 @@ const bannerController = {
     },
     delete:async(req,res)=>{
         try{
-            const banner = await Banner.findById(req.params.id);
-            if(!banner){
+            const room = await Room.findById(req.params.id);
+            if(!room){
                 return res.status(404).send({
-                    message:"Banner Not Found!"
+                    message:"Room Not Found!"
                 }); 
             }else{
                 try{
-                    await banner.delete();
+                    await room.delete();
                     res.status(200).json({
-                        message:"Success! Post has been deleted"                        
+                        message:"Success! Room has been deleted"                        
                     })
                 }catch(err){
                     res.status(500).json({
@@ -118,7 +108,7 @@ const bannerController = {
                 error:err
             })
         }
-    }
+    }    
 }
 
-module.exports = bannerController
+module.exports = roomController

@@ -1,42 +1,42 @@
-const Banner = require('../models/banner-model');
-
+const Seat = require('../models/seat-model')
 const mongoose = require("mongoose");
 
-const bannerController = {
+const seatController = {
     list:async(req,res) =>{
         try{
-            const banners = await Banner.aggregate([
+            
+            const seat = await Seat.aggregate([
                 {
                     $lookup:{
-                    from:"movies",
-                    localField:"movieId",
+                    from:"rooms",
+                    localField:"roomId",
                     foreignField: "_id",
-                    as:"movie_info"
+                    as:"room_info"
                 }
                 },{
-                    $unwind:"$movie_info"
+                    $unwind:"$room_info"
                 }
             ])
-            console.log(banners)
             res.status(200).json({
                 message:"Success",
-                data: banners
+                data: seat
             })
         }catch(err){
+            console.log(err)
             res.status(400).json(err)
         }
     },
     getById:async(req,res) =>{
         try{
-            const banner = await Banner.findById(req.params.id)
-            if(!banner){
+            const seat = await Seat.findById(req.params.id)
+            if(!seat){
                 return res.status(404).json({
-                    message:"Banner Not Found!"
+                    message:"Seat Not Found!"
                 });
             }
             return res.status(200).json({
                 message:"Success",
-                data: banner
+                data: seat
             });
             
         }catch(err){
@@ -44,14 +44,16 @@ const bannerController = {
         }
     },
     create:async(req,res) =>{
-        const {createBy} = req.body
-        console.log(createBy)
-        const newBanner = new Banner(req.body);
-        newBanner.createdBy = mongoose.Types.ObjectId(createBy)
+        const newSeat = new Seat(req.body);
+        newSeat.createdBy = mongoose.Types.ObjectId(req.body.createdBy)
         try{
-            const saveBanner = await newBanner.save();
-            res.status(200).json(saveBanner);
+            const saveSeat = await newSeat.save();
+            res.status(200).json({
+                message:"Success",
+                data: saveSeat
+            });
         }catch(err){
+            console.log(err)
             res.status(400).json({
                 message:"Failed",
                 error:err
@@ -60,14 +62,14 @@ const bannerController = {
     },
     update:async(req,res)=>{
         try{
-            const banner = await Banner.findById(req.params.id);
-            if(!banner){
+            const seat = await Seat.findById(req.params.id);
+            if(!seat){
                 return res.status(404).send({
-                    message:"Banner Not Found!"
+                    message:"Seat Not Found!"
                 }); 
             }else{
                 try{
-                    const updateBanner = await Banner.findByIdAndUpdate(
+                    const updateSeat = await Seat.findByIdAndUpdate(
                         req.params.id,
                         {
                             $set:req.body
@@ -76,7 +78,7 @@ const bannerController = {
                     );
                     res.status(200).json({
                         message:"Success",
-                        data:updateBanner
+                        data:updateSeat
                     })
                 }catch(err){
                     res.status(500).json({
@@ -94,16 +96,16 @@ const bannerController = {
     },
     delete:async(req,res)=>{
         try{
-            const banner = await Banner.findById(req.params.id);
-            if(!banner){
+            const seat = await Seat.findById(req.params.id);
+            if(!seat){
                 return res.status(404).send({
-                    message:"Banner Not Found!"
+                    message:"Seat Not Found!"
                 }); 
             }else{
                 try{
-                    await banner.delete();
+                    await seat.delete();
                     res.status(200).json({
-                        message:"Success! Post has been deleted"                        
+                        message:"Success! Seat has been deleted"                        
                     })
                 }catch(err){
                     res.status(500).json({
@@ -118,7 +120,7 @@ const bannerController = {
                 error:err
             })
         }
-    }
+    }    
 }
 
-module.exports = bannerController
+module.exports = seatController
