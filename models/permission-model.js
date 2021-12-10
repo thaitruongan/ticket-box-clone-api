@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const PermissionSchema = new Schema({
   permission: {
     type:String,
-    require:[true,"Permission is require"]
+    required:[true,"Permission is require"]
   },
   collectionName:{
     type:String,
-    require:[true,"Collection name is require"]
+    required:[true,"Collection name is require"]
   }    
 });
 

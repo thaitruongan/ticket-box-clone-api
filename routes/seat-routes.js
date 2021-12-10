@@ -4,7 +4,6 @@ const Auth = require("../middlewares/auth");
 
 router.post('/', Auth.authentication,seatController.create);
 router.put('/:id',Auth.authentication,seatController.update);
-router.delete('/:id',Auth.authentication,seatController.delete);
 router.get('/:id',Auth.authentication,seatController.getById);
 router.get('/',Auth.authentication,seatController.list);
 

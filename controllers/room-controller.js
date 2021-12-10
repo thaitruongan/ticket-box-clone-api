@@ -1,10 +1,10 @@
 const Room = require('../models/room-model')
 const mongoose = require("mongoose");
+const seatController = require("./seat-controller")
 
 const roomController = {
     list:async(req,res) =>{
-        try{
-            
+        try{            
             const rooms = await Room.find()
             res.status(200).json({
                 message:"Success",
@@ -37,9 +37,18 @@ const roomController = {
         const newRoom = new Room(req.body);
         try{
             const saveRoom = await newRoom.save();
+            const seats = await seatController.create(
+                newRoom._id,
+                newRoom.rowAmount,
+                newRoom.columnAmount,
+                req.user.id
+              )
             res.status(200).json({
                 message:"Success",
-                data: saveRoom
+                data: {
+                    saveRoom:saveRoom,
+                    seats:seats
+                }
             });
         }catch(err){
             res.status(400).json({
@@ -83,6 +92,7 @@ const roomController = {
                     message:"Room Not Found!"
                 }); 
             }else{
+                await seatController.delete(req.params.id)                
                 await room.delete();
                 res.status(200).json({
                     message:"Success! Room has been deleted"                        

@@ -5,7 +5,27 @@ const RoomSchema = new Schema({
   name: {
     type:String,
     unique:true,
-    require:[true,"Room name is require"]
+    required:[true,"Room name is require"]
+  },
+  rowAmount:{
+    type: Number,
+    required:[true,"Row amount is require"],
+    validate:{
+      validator: function(c){
+          return c > 0
+      },
+      message: (props) =>`${props.value} must be more than 0`
+    }
+  },
+  columnAmount:{
+    type: Number,
+    required:[true,"Column amount is require"],
+    validate:{
+      validator: function(c){
+          return c > 0
+      },
+      message: (props) =>`${props.value} must be more than 0`
+    }
   },  
   createBy:{
     type: Schema.Types.ObjectId,
