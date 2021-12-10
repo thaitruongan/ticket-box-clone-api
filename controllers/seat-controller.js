@@ -49,7 +49,7 @@ const seatController = {
                     as:"room_info"
                 }
                 },{
-                    $unwind:"$room_info"
+                    $unwind:"$room_info",
                 }
             ])
             res.status(200).json({

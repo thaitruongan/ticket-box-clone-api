@@ -38,7 +38,7 @@ const userController = {
       console.log(otpCache.request(`otp${phoneNumber}`));
       return res
         .status(200)
-        .json({ message: "success!", data: "cho nhap cai otp" });
+        .json({ message: "success!", data: "Sending OTP..." });
     } catch (error) {
       console.log(error);
       return res.status(400).json({ message: "failure!", data: error.message });

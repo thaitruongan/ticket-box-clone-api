@@ -71,8 +71,7 @@ const ShowtimeController = {
       //create tickets
       const tickets = await TicketController.Create(
         showtime._id,
-        showtime.roomId,
-        userId
+        showtime.roomId
       );
       res.status(200).json({
         message: "successfully!",
