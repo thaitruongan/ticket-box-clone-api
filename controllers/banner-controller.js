@@ -73,6 +73,7 @@ const bannerController = {
         order: order,
         version: version + 1,
         updateBy: req.user.id,
+        updatedAt: new Date(),
         $push: {
           oldVersion: banner,
         },

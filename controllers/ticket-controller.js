@@ -26,6 +26,32 @@ const TicketController = {
       return Promise.reject(error);
     }
   },
+
+  async GetByShowtimeId(req, res) {
+    try {
+      const { id } = req.params;
+
+      const tickets = await TicketModel.aggregate([
+        {
+          $match: {
+            showtimeId: mongoose.Types.ObjectId,
+          },
+        },
+        {
+          $lookup: {
+            from: "seats",
+            localField: "seatId",
+            foreignField: "_id",
+            as: "seat",
+          },
+        },
+      ]);
+
+      res.status(200).json({ message: "success", data: tickets });
+    } catch (error) {
+      res.status(400).json({ message: "fail", data: error.message });
+    }
+  },
 };
 
 module.exports = TicketController;

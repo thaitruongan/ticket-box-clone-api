@@ -52,10 +52,16 @@ const movieController = {
       }
       //this scope is already in try block
       let version = movie.version;
+      req.body.updateBy = req.user.id;
+      req.body.version = version + 1;
+      req.body.updatedAt = new Date();
       const updateMovie = await Movie.findByIdAndUpdate(
         req.params.id,
         {
           $set: req.body,
+          $push: {
+            oldVersion: movie,
+          },
         },
         { new: true }
       );
@@ -64,6 +70,7 @@ const movieController = {
         data: updateMovie,
       });
     } catch (err) {
+      console.log(er);
       res.status(400).json({
         message: "Failed",
         error: err,

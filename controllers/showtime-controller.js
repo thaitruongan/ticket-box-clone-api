@@ -5,24 +5,7 @@ const mongoose = require("mongoose");
 const ShowtimeController = {
   async List(req, res) {
     try {
-      const showtime = await ShowtimeModel.aggregate([
-        {
-          $lookup: {
-            from: "tickets",
-            localField: "_id",
-            foreignField: "showtimeId",
-            as: "tickets",
-          },
-        },
-        {
-          $lookup: {
-            from: "seats",
-            localField: "tickets.seatId",
-            foreignField: "_id",
-            as: "tickets.seat",
-          },
-        },
-      ]);
+      const showtime = await ShowtimeModel.find();
 
       res.status(200).json({ message: "successfully!", data: showtime });
     } catch (error) {
@@ -33,8 +16,62 @@ const ShowtimeController = {
 
   async GetById(req, res) {
     try {
+      // const showtime = await ShowtimeModel.aggregate([
+      //   { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+      //   {
+      //     $lookup: {
+      //       from: "movies",
+      //       localField: "movieId",
+      //       foreignField: "_id",
+      //       as: "movie",
+      //     },
+      //   },
+      //   {
+      //     $unwind: {
+      //       path: "$movie",
+      //       preserveNullAndEmptyArrays: true,
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "tickets",
+      //       localField: "_id",
+      //       foreignField: "showtimeId",
+      //       as: "tickets",
+      //     },
+      //   },
+      //   {
+      //     $unwind: {
+      //       path: "$tickets",
+      //       preserveNullAndEmptyArrays: true,
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "seats",
+      //       localField: "tickets.seatId",
+      //       foreignField: "_id",
+      //       as: "tickets.seat",
+      //     },
+      //   }
+      // ]);
+
       const showtime = await ShowtimeModel.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+        {
+          $lookup: {
+            from: "movies",
+            localField: "movieId",
+            foreignField: "_id",
+            as: "movie",
+          },
+        },
+        {
+          $unwind: {
+            path: "$movie",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         {
           $lookup: {
             from: "tickets",
@@ -44,11 +81,28 @@ const ShowtimeController = {
           },
         },
         {
+          $unwind: {
+            path: "$tickets",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $lookup: {
             from: "seats",
             localField: "tickets.seatId",
             foreignField: "_id",
             as: "tickets.seat",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            movie: { $first: "$movie" },
+            timeStart: { $first: "$timeStart" },
+            roomId: { $first: "$roomId" },
+            standardPrice: { $first: "$standardPrice" },
+            vipPrice: { $first: "$vipPrice" },
+            tickets: { $push: "$tickets" },
           },
         },
       ]);
@@ -83,7 +137,10 @@ const ShowtimeController = {
     }
   },
 
-  Update(req, res) {},
+  Update(req, res) {
+    try {
+    } catch (error) {}
+  },
 };
 
 module.exports = ShowtimeController;
