@@ -3,7 +3,7 @@ const SeatModel = require("../models/seat-model");
 const mongoose = require("mongoose");
 
 const TicketController = {
-  async Create(showtimeId, roomId, userId) {
+  async Create(showtimeId, roomId) {
     try {
       const seats = await SeatModel.find({ roomId: roomId });
 
@@ -11,7 +11,6 @@ const TicketController = {
         const ticket = new TicketModel({
           seatId: mongoose.Types.ObjectId(seats[i]._id),
           showtimeId: mongoose.Types.ObjectId(showtimeId),
-          userId: mongoose.Types.ObjectId(userId),
         });
 
         await ticket.save();

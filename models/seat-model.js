@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const SeatSchema = new Schema({
   row: {
     type:String,
-    require:[true,"Row is require"]
+    required:[true,"Row is require"]
   },
   column:{
       type:Number,
-      require:[true,"Column is require"],
+      required:[true,"Column is require"],
       validate:{
         validator: function(c){
             return c >= 0
@@ -26,7 +26,7 @@ const SeatSchema = new Schema({
   },
   roomId:{
       type:Schema.Types.ObjectId,
-      require:[true,"RoomId is require"]
+      required:[true,"RoomId is require"]
   },  
   createBy:{
     type: Schema.Types.ObjectId,

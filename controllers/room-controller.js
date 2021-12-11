@@ -1,5 +1,6 @@
 const Room = require("../models/room-model");
 const mongoose = require("mongoose");
+const seatController = require("./seat-controller");
 
 const roomController = {
   list: async (req, res) => {
@@ -35,9 +36,18 @@ const roomController = {
     const newRoom = new Room(req.body);
     try {
       const saveRoom = await newRoom.save();
+      const seats = await seatController.create(
+        newRoom._id,
+        newRoom.rowAmount,
+        newRoom.columnAmount,
+        req.user.id
+      );
       res.status(200).json({
         message: "Success",
-        data: saveRoom,
+        data: {
+          saveRoom: saveRoom,
+          seats: seats,
+        },
       });
     } catch (err) {
       res.status(400).json({
@@ -53,28 +63,19 @@ const roomController = {
         return res.status(404).send({
           message: "Room Not Found!",
         });
-      }
-      const version = room.version;
-      req.body.version = version + 1;
-      req.body.updatedAt = new Date();
-      req.body.updateBy = req.user.id;
-
-      const updateRoom = await Room.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-          $push: {
-            oldVersion: room,
+      } else {
+        const updateRoom = await Room.findByIdAndUpdate(
+          req.params.id,
+          {
+            $set: req.body,
           },
-        },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json({
-        message: "Success",
-        data: updateRoom,
-      });
+          { new: true }
+        );
+        res.status(200).json({
+          message: "Success",
+          data: updateRoom,
+        });
+      }
     } catch (err) {
       res.status(400).json({
         message: "Failed",
@@ -90,6 +91,7 @@ const roomController = {
           message: "Room Not Found!",
         });
       } else {
+        await seatController.delete(req.params.id);
         await room.delete();
         res.status(200).json({
           message: "Success! Room has been deleted",
@@ -103,5 +105,4 @@ const roomController = {
     }
   },
 };
-
 module.exports = roomController;

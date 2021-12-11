@@ -5,19 +5,19 @@ const MovieSchema = new Schema({
   name: {
     type:String,
     unique:true,
-    require:[true,"Movie name is require"]
+    required:[true,"Movie name is require"]
   },
 
   image: {
     type: String,
     unique:true,
-    require:[true,"Image is require"]
+    required:[true,"Image is require"]
   },
 
   trailer: {
     type: String,
     unique:true,
-    require:[true,"Trailer is require"]
+    required:[true,"Trailer is require"]
   },
 
   description: {
