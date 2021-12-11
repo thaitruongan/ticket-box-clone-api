@@ -33,7 +33,7 @@ const TicketController = {
       const tickets = await TicketModel.aggregate([
         {
           $match: {
-            showtimeId: mongoose.Types.ObjectId,
+            showtimeId: mongoose.Types.ObjectId(id),
           },
         },
         {
@@ -42,6 +42,30 @@ const TicketController = {
             localField: "seatId",
             foreignField: "_id",
             as: "seat",
+          },
+        },
+        {
+          $unwind: {
+            path: "$seat",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            seatId: { $first: "$seatId" },
+            showtimeId: { $first: "$showtimeId" },
+            status: { $first: "$status" },
+            userId: { $first: "$userId" },
+            row: { $first: "$seat.row" },
+            column: { $first: "$seat.column" },
+            isVip: { $first: "$seat.isVip" },
+          },
+        },
+        {
+          $sort: {
+            row: 1,
+            column: 1,
           },
         },
       ]);

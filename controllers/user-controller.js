@@ -46,8 +46,10 @@ const userController = {
   },
 
   async VerifyOTP(req, res) {
+    console.log(req.body);
     try {
       const { otp, phoneNumber } = req.body;
+
       let user = await UserModel.findOne({ phoneNumber: phoneNumber });
       if (user === null) {
         user = new UserModel({ phoneNumber: phoneNumber });
