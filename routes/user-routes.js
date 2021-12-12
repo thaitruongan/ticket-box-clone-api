@@ -44,7 +44,7 @@ Router.get("/", Auth.authentication,UserController.List);
  *                phoneNumber:
  *                  type: string                  
  *              example:
- *                  phoneNumber: 0914518169  
+ *                  phoneNumber: "0914518169"  
  *        responses:
  *         "200":
  *           description: Returns message success and sending OTP

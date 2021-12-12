@@ -6,16 +6,7 @@ const MovieModel = require("../models/movie-model");
 const ShowtimeController = {
   async List(req, res) {
     try {
-      let tmp = new Date("12-11-2021");
-      tmp.setHours(10);
-      tmp.setMinutes(59);
-      let check = await ShowtimeController.TimeCheck(
-        tmp,
-        "61aedafbc5c70c6293511675",
-        "61b2d0135b2065af8e65c4f7"
-      );
-
-      console.log("check", check);
+      
 
       const showtime = await ShowtimeModel.find();
 
@@ -88,6 +79,19 @@ const ShowtimeController = {
 
   async Create(req, res) {
     try {
+      let tmp = new Date(req.body.timeStart);
+      let check = await ShowtimeController.TimeCheck(
+        tmp,
+        req.body.movieId,
+        req.body.roomId
+      );
+
+      console.log("check", check);
+      if(!check){
+        return res.status(400).json({
+          message:"Room is not empty at this time!"
+        })
+      }
       req.body.createBy = req.user.id;
       let showtime = new ShowtimeModel(req.body);
       showtime.timeStart = new Date(req.body.timeStart);
@@ -114,6 +118,8 @@ const ShowtimeController = {
   },
 
   async TimeCheck(timeStart, movieId, roomId) {
+    if(timeStart <= new Date())
+      return false
     try {
       const movie = await MovieModel.findOne({
         _id: movieId,
@@ -131,11 +137,7 @@ const ShowtimeController = {
       top.setHours(top.getHours() - 5);
 
       let bottom = new Date(timeStart);
-      bottom.setHours(bottom.getHours() + 5);
-      console.log(top, top.getHours(), top.getMinutes());
-      console.log(bottom, bottom.getHours(), bottom.getMinutes());
-      console.log(timeStart, timeStart.getHours(), timeStart.getMinutes());
-      console.log(top > bottom);
+      bottom.setHours(bottom.getHours() + 5);      
       const showtime = await ShowtimeModel.aggregate([
         {
           $match: {
@@ -161,15 +163,6 @@ const ShowtimeController = {
         let tmpDate = new Date(showtime[i].timeStart);
         tmpDate.setMinutes(
           tmpDate.getMinutes() + showtime[i].movie[0].runningTime
-        );
-
-        console.log(
-          timeStart.getHours(),
-          timeStart.getMinutes(),
-          timeEnd.getHours(),
-          timeEnd.getMinutes(),
-          showtime[i].timeStart.getHours(),
-          showtime[i].timeStart.getMinutes()
         );
 
         if (timeStart >= showtime[i].timeStart && timeStart <= tmpDate)
