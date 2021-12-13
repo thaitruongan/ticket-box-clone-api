@@ -30,7 +30,7 @@ const upload = require("../middlewares/upload");
  *                  type: string
  *                  format: binary
  *                name:
- *                  type:strings
+ *                  type: string
  *                trailer:
  *                  type: string
  *                description:
@@ -41,20 +41,13 @@ const upload = require("../middlewares/upload");
  *                  type: number
  *                releaseDate:
  *                  type: date
- *              example:
- *                name: SHANG-CHI AND THE LEGEND OF THE TEN RINGS
- *                trailer: hihi.mp4
- *                description: hihi
- *                label: C13
- *                runningTime: 90
- *                releaseDate: 10-12-2021
- *        responses:
- *         "200":
- *           description: Returns created movie
- *         "400":
- *           description: Server error
+ *      responses:
+ *        "200":
+ *          description: Returns created banner
+ *        "400":
+ *          description: Server error
  */
-router.post("/", Auth.authentication, upload, movieController.create);
+router.post("/", Auth.authentication, upload,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.create);
 
 /**
  * @swagger
@@ -88,7 +81,7 @@ router.post("/", Auth.authentication, upload, movieController.create);
  *                  type: string
  *                  format: binary
  *                name:
- *                  type:string
+ *                  type: string
  *                trailer:
  *                  type: string
  *                description:
@@ -99,15 +92,15 @@ router.post("/", Auth.authentication, upload, movieController.create);
  *                  type: number
  *                releaseDate:
  *                  type: date
- *              example:
- *                name: SHANG-CHI AND THE LEGEND OF THE TEN RINGS
+ *                isAlive:
+ *                  type: boolean
  *      responses:
  *        "200":
  *          description: Returns updated movie
  *        "400":
  *          description: Movie not found
  */
-router.put("/:id", Auth.authentication, upload, movieController.update);
+router.put("/:id", Auth.authentication, upload,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.update);
 
 /**
  * @swagger
@@ -136,7 +129,7 @@ router.put("/:id", Auth.authentication, upload, movieController.update);
  *          description: Movie not found
  *
  */
-router.delete("/:id", Auth.authentication, movieController.delete);
+router.delete("/:id", Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.delete);
 
 /**
  * @swagger

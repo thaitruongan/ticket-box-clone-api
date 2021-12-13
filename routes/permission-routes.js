@@ -32,13 +32,13 @@ const Auth = require("../middlewares/auth");
  *              example:
  *                permission: Admin
  *                collectionName: movie                   
- *        responses:
- *         "200":
- *           description: Returns created permission
- *         "400":
- *           description: Server error
+ *      responses:
+ *        "200":
+ *          description: Returns created permission
+ *        "400":
+ *          description: Server error
  */
-router.post('/', Auth.authentication,permissionController.create);
+router.post('/', Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),permissionController.create);
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ router.post('/', Auth.authentication,permissionController.create);
  *          description: Permission not found
  *          
  */
-router.delete('/:id',Auth.authentication,permissionController.delete);
+router.delete('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),permissionController.delete);
 
 /**
  * @swagger

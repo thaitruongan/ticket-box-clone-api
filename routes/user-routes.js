@@ -99,11 +99,16 @@ Router.post("/otp", UserController.VerifyOTP);
  *      produces:
  *        - application/json
  *      tags:
- *        - Rooms
+ *        - Users
  *      parameters:
  *        - in: header
  *          name: tbtoken
  *          description: Token authentication
+ *          type: string
+ *          required: true
+ *        - in: path
+ *          name: id
+ *          description: user ID
  *          type: string
  *          required: true
  *      requestBody:
@@ -118,7 +123,7 @@ Router.post("/otp", UserController.VerifyOTP);
  *                  type: string
  *                  format: binary
  *                email:
- *                  type:string
+ *                  type: string
  *                name:
  *                  type: string
  *                birth:
@@ -127,20 +132,43 @@ Router.post("/otp", UserController.VerifyOTP);
  *                  type: string
  *                avatar:
  *                  type: string
- *                permission:
- *                  type: string
- *              example:
- *                  email: ben.anthai99@gmail.com
- *                  name: Thái Trường An
- *                  birth: 12-31-1999
- *                  sex: male
- *                  avatar: thaitruongan.png
  *      responses:
  *        "200":
  *          description: Returns updated user
  */
 Router.put("/", Auth.authentication, upload, UserController.Update);
 
+/**
+ * @swagger
+ * /api/user/grant-permission:
+ *    put:
+ *      summary: Grant permission
+ *      produces:
+ *        - application/json
+ *      tags:
+ *        - Users
+ *      parameters:
+ *        - in: header
+ *          name: tbtoken
+ *          description: Token authentication
+ *          type: string
+ *          required: true 
+ *      requestBody:
+ *        description: Grant data for user
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:                 
+ *                permissions:
+ *                  type: array
+ *                id:
+ *                  type: string
+ *      responses:
+ *        "200":
+ *          description: Returns updated grant user
+ */
 Router.put(
   "/grant-permission",
   Auth.authentication,

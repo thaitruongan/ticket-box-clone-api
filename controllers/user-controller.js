@@ -143,6 +143,7 @@ const userController = {
 
   async GrantPermission(req, res) {
     try {
+      console.log(req.body)
       const { id, permissions } = req.body;
       console.log(id, permissions);
 

@@ -48,7 +48,7 @@ const Auth = require("../middlewares/auth");
  *        "400":
  *          description: Seat not found
  */
-router.put('/:id',Auth.authentication,seatController.update);
+router.put('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),seatController.update);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.put('/:id',Auth.authentication,seatController.update);
  *        "404":
  *          description: Seat not found
  */
-router.get('/:id',Auth.authentication,seatController.getById);
+router.get('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),seatController.getById);
 
 /**
  * @swagger
@@ -93,6 +93,6 @@ router.get('/:id',Auth.authentication,seatController.getById);
  *          description: Returns a list of all seat
  *
  */
-router.get('/',Auth.authentication,seatController.list);
+router.get('/',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),seatController.list);
 
 module.exports = router

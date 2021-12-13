@@ -39,7 +39,7 @@ const upload = require("../middlewares/upload");
  *        "400":
  *          description: Server error
  */
-router.post("/", Auth.authentication, upload, bannerController.create);
+router.post("/", Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }), upload, bannerController.create);
 
 /**
  * @swagger
@@ -82,7 +82,7 @@ router.post("/", Auth.authentication, upload, bannerController.create);
  *        "400":
  *          description: Banner not found
  */
-router.put("/:id", Auth.authentication, upload, bannerController.update);
+router.put("/:id", Auth.authentication, upload,Auth.authorization({ permission: "Superuser", collectionName: "*" }), bannerController.update);
 
 /**
  * @swagger

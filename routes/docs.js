@@ -16,14 +16,15 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./routes/banner-routes.js",
-  "./routes/movie-routes.js",
-  "./routes/permission-routes.js",
-  "./routes/room-routes.js",
-  "./routes/seat-routes.js",
-  "./routes/showtime-routes.js",
-  "./routes/upload-routes.js",
-  "./routes/user-routes.js",
+  apis: [
+    "./routes/user-routes.js",
+    "./routes/banner-routes.js",
+    "./routes/movie-routes.js",
+    "./routes/permission-routes.js",
+    "./routes/room-routes.js",
+    "./routes/seat-routes.js",
+    "./routes/showtime-routes.js",
+    "./routes/ticket-routes.js"
 ],
 };
 const specs = swagger(swaggerOptions);

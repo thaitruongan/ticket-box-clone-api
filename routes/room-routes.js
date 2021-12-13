@@ -35,13 +35,13 @@ const Auth = require("../middlewares/auth");
  *                name: CineStar Num Bếu
  *                rowAmount: 2
  *                columnAmount: 10     
- *        responses:
- *         "200":
- *           description: Returns created room
- *         "400":
- *           description: Server error
+ *      responses:
+ *        "200":
+ *          description: Returns created room
+ *        "400":
+ *          description: Server error
  */
-router.post('/', Auth.authentication,roomController.create);
+router.post('/', Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),roomController.create);
 
 /**
  * @swagger
@@ -87,7 +87,7 @@ router.post('/', Auth.authentication,roomController.create);
  *        "400":
  *          description: Room not found
  */
-router.put('/:id',Auth.authentication,roomController.update);
+router.put('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),roomController.update);
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ router.put('/:id',Auth.authentication,roomController.update);
  *          description: Room not found
  *          
  */
-router.delete('/:id',Auth.authentication,roomController.delete);
+router.delete('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),roomController.delete);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.delete('/:id',Auth.authentication,roomController.delete);
  *        "404":
  *          description: Room not found
  */
-router.get('/:id',Auth.authentication,roomController.getById);
+router.get('/:id',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),roomController.getById);
 
 /**
  * @swagger
@@ -161,6 +161,6 @@ router.get('/:id',Auth.authentication,roomController.getById);
  *          description: Returns a list of all room
  *
  */
-router.get('/',Auth.authentication,roomController.list);
+router.get('/',Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }),roomController.list);
 
 module.exports = router

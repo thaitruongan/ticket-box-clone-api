@@ -83,7 +83,7 @@ const movieController = {
         data: updateMovie,
       });
     } catch (err) {
-      console.log(er);
+      console.log(err);
       res.status(400).json({
         message: "Failed",
         error: err,

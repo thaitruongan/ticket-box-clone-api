@@ -74,12 +74,12 @@ Router.get("/:id", ShowtimeController.GetById);
  *                  roomId: 61b2d0135b2065af8e65c4f7
  *                  standardPrice: 30000
  *                  vipPrice: 50000     
- *        responses:
- *         "200":
- *           description: Returns created room
- *         "400":
- *           description: Server error
+ *      responses:
+ *        "200":
+ *          description: Returns created show time
+ *        "400":
+ *          description: Server error
  */
-Router.post("/", Auth.authentication, ShowtimeController.Create);
+Router.post("/", Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }), ShowtimeController.Create);
 
 module.exports = Router;
