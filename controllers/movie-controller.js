@@ -1,15 +1,19 @@
 const Movie = require("../models/movie-model");
 const mongoose = require("mongoose");
+const { cache } = require("../controllers/cache-controller");
 
 const movieController = {
   list: async (req, res) => {
     try {
-      const movies = await Movie.find();
-      res.status(200).json({
-        message: "Success",
-        data: movies,
-      });
+      let movies = await cache.request(`list-movie`);
+      if (!movies) {
+        movies = await Movie.find({ isAlive: true });
+        cache.set(`list-movie`, JSON.stringify(movies));
+        return res.status(200).json({ message: "success", data: movies });
+      }
+      res.status(200).send({ message: "success", data: JSON.parse(movies) });
     } catch (err) {
+      console.error(err);
       res.status(400).json(err);
     }
   },
@@ -30,6 +34,13 @@ const movieController = {
     }
   },
   create: async (req, res) => {
+    if (!req.uploadData)
+      return res.status(400).json({
+        message: "fail",
+        error: new Error("Image is required").message,
+      });
+
+    req.body.image = req.uploadData.url;
     req.body.createBy = req.user.id;
     const newMovie = new Movie(req.body);
     try {
@@ -44,6 +55,7 @@ const movieController = {
   },
   update: async (req, res) => {
     try {
+      if (req.uploadData) req.body.image = req.uploadData.url;
       const movie = await Movie.findById(req.params.id);
       if (!movie) {
         return res.status(404).send({
@@ -65,6 +77,7 @@ const movieController = {
         },
         { new: true }
       );
+      cache.delete(`list-movie`);
       res.status(200).json({
         message: "Success",
         data: updateMovie,
@@ -86,6 +99,7 @@ const movieController = {
         });
       }
       await movie.delete();
+      cache.delete(`list-movie`);
       res.status(200).json({
         message: "Success! Movie has been deleted",
       });
@@ -104,6 +118,7 @@ const movieController = {
         name: {
           $regex: name,
         },
+        isAlive: true,
       });
       res.status(200).json({
         message: "Success",

@@ -34,6 +34,7 @@ const TicketController = {
         {
           $match: {
             showtimeId: mongoose.Types.ObjectId(id),
+            isAlive: true,
           },
         },
         {

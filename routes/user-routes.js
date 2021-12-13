@@ -1,6 +1,7 @@
 const Router = require("express").Router();
 const UserController = require("../controllers/user-controller");
 const Auth = require("../middlewares/auth");
+const upload = require("../middlewares/upload");
 
 /**
  * @swagger
@@ -22,17 +23,22 @@ const Auth = require("../middlewares/auth");
  *          description: Returns a list of all user
  *
  */
-Router.get("/", Auth.authentication,UserController.List);
+Router.get(
+  "/",
+  Auth.authentication,
+  Auth.authorization({ permission: "Superuser", collectionName: "*" }),
+  UserController.List
+);
 
 /**
  * @swagger
  * /api/user:
  *    post:
- *      summary: Login by phone number 
+ *      summary: Login by phone number
  *      produces:
  *        - application/json
  *      tags:
- *        - Users   
+ *        - Users
  *      requestBody:
  *        description: Phone number
  *        required: true
@@ -42,14 +48,14 @@ Router.get("/", Auth.authentication,UserController.List);
  *              type: object
  *              properties:
  *                phoneNumber:
- *                  type: string                  
+ *                  type: string
  *              example:
- *                  phoneNumber: "0914518169"  
- *        responses:
- *         "200":
- *           description: Returns message success and sending OTP
- *         "400":
- *           description: Server error
+ *                  phoneNumber: "0914518169"
+ *      responses:
+ *        "200":
+ *          description: Returns message success and sending OTP
+ *        "400":
+ *          description: Server error
  */
 Router.post("/", UserController.LoginByPhone);
 
@@ -57,11 +63,11 @@ Router.post("/", UserController.LoginByPhone);
  * @swagger
  * /api/user/otp:
  *    post:
- *      summary: Insert OTP 
+ *      summary: Insert OTP
  *      produces:
  *        - application/json
  *      tags:
- *        - Users   
+ *        - Users
  *      requestBody:
  *        description: OTP
  *        required: true
@@ -73,14 +79,14 @@ Router.post("/", UserController.LoginByPhone);
  *                phoneNumber:
  *                  type: string
  *                otp:
- *                  type: string                   
+ *                  type: string
  *              example:
- *                  phoneNumber: "0914518169"  
+ *                  phoneNumber: "0914518169"
  *                  otp: "2131"
- *        responses:
- *         "200":
+ *      responses:
+ *        "200":
  *           description: Returns message success, token, data user
- *         "400":
+ *        "400":
  *           description: Server error
  */
 Router.post("/otp", UserController.VerifyOTP);
@@ -99,15 +105,18 @@ Router.post("/otp", UserController.VerifyOTP);
  *          name: tbtoken
  *          description: Token authentication
  *          type: string
- *          required: true     
+ *          required: true
  *      requestBody:
  *        description: Data for user
  *        required: true
  *        content:
- *          application/json:
+ *          multipart/form-data:
  *            schema:
  *              type: object
  *              properties:
+ *                file:
+ *                  type: string
+ *                  format: binary
  *                email:
  *                  type:string
  *                name:
@@ -119,7 +128,7 @@ Router.post("/otp", UserController.VerifyOTP);
  *                avatar:
  *                  type: string
  *                permission:
- *                  type: string          
+ *                  type: string
  *              example:
  *                  email: ben.anthai99@gmail.com
  *                  name: Thái Trường An
@@ -130,6 +139,12 @@ Router.post("/otp", UserController.VerifyOTP);
  *        "200":
  *          description: Returns updated user
  */
-Router.put("/", Auth.authentication,UserController.Update);
+Router.put("/", Auth.authentication, upload, UserController.Update);
+
+Router.put(
+  "/grant-permission",
+  Auth.authentication,
+  UserController.GrantPermission
+);
 
 module.exports = Router;

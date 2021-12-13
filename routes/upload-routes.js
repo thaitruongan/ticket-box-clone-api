@@ -1,6 +1,6 @@
-const router = require('express').Router()
-const uploadController = require('../controllers/upload-controller')
-const upload = require('../middlewares/upload')
+const router = require("express").Router();
+const uploadController = require("../controllers/upload-controller");
+const upload = require("../middlewares/upload");
 const Auth = require("../middlewares/auth");
 
 /**
@@ -31,6 +31,6 @@ const Auth = require("../middlewares/auth");
  *        "404":
  *          description: Server error
  */
-router.post('/', Auth.authentication,uploadController.uploadFile)
+router.post("/", upload, uploadController.uploadFile);
 
-module.exports = router
+module.exports = router;

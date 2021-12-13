@@ -18,6 +18,10 @@ const TicketSchema = new Schema({
     type: Schema.Types.ObjectId,
     default: null,
   },
+  isAlive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("Ticket", TicketSchema);

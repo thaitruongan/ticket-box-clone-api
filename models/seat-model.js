@@ -3,32 +3,32 @@ const { Schema } = mongoose;
 
 const SeatSchema = new Schema({
   row: {
-    type:String,
-    required:[true,"Row is require"]
+    type: String,
+    required: [true, "Row is require"],
   },
-  column:{
-      type:Number,
-      required:[true,"Column is require"],
-      validate:{
-        validator: function(c){
-            return c >= 0
-        },
-        message: (props) =>`${props.value} must be greater than 0`
-    }
+  column: {
+    type: Number,
+    required: [true, "Column is require"],
+    validate: {
+      validator: function (c) {
+        return c >= 0;
+      },
+      message: (props) => `${props.value} must be greater than 0`,
+    },
   },
-  isVip:{
-      type:Boolean,
-      default:"false",
+  isVip: {
+    type: Boolean,
+    default: "false",
   },
-  isAvailable:{
-      type:Boolean,
-      default:"true"
+  isAvailable: {
+    type: Boolean,
+    default: "true",
   },
-  roomId:{
-      type:Schema.Types.ObjectId,
-      required:[true,"RoomId is require"]
-  },  
-  createBy:{
+  roomId: {
+    type: Schema.Types.ObjectId,
+    required: [true, "RoomId is require"],
+  },
+  createBy: {
     type: Schema.Types.ObjectId,
     default: null,
   },
@@ -56,7 +56,10 @@ const SeatSchema = new Schema({
     type: [],
     default: [],
   },
-  
+  isAlive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("Seat", SeatSchema);

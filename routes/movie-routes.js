@@ -1,13 +1,13 @@
-const router = require('express').Router()
+const router = require("express").Router();
 const movieController = require("../controllers/movie-controller");
 const Auth = require("../middlewares/auth");
-
+const upload = require("../middlewares/upload");
 
 /**
  * @swagger
  * /api/movie:
  *    post:
- *      summary: Creates a new movie  
+ *      summary: Creates a new movie
  *      produces:
  *        - application/json
  *      tags:
@@ -22,14 +22,15 @@ const Auth = require("../middlewares/auth");
  *        description: Data for new movie
  *        required: true
  *        content:
- *          application/json:
+ *          multipart/form-data:
  *            schema:
  *              type: object
  *              properties:
- *                name:
- *                  type:string
- *                image:
+ *                file:
  *                  type: string
+ *                  format: binary
+ *                name:
+ *                  type:strings
  *                trailer:
  *                  type: string
  *                description:
@@ -39,22 +40,21 @@ const Auth = require("../middlewares/auth");
  *                runningTime:
  *                  type: number
  *                releaseDate:
- *                  type: date                
+ *                  type: date
  *              example:
  *                name: SHANG-CHI AND THE LEGEND OF THE TEN RINGS
- *                image: hihi.png
  *                trailer: hihi.mp4
  *                description: hihi
  *                label: C13
  *                runningTime: 90
- *                releaseDate: 10-12-2021      
+ *                releaseDate: 10-12-2021
  *        responses:
  *         "200":
  *           description: Returns created movie
  *         "400":
  *           description: Server error
  */
-router.post('/', Auth.authentication, movieController.create);
+router.post("/", Auth.authentication, upload, movieController.create);
 
 /**
  * @swagger
@@ -80,14 +80,15 @@ router.post('/', Auth.authentication, movieController.create);
  *        description: Data for movie
  *        required: true
  *        content:
- *          application/json:
+ *          multipart/form-data:
  *            schema:
  *              type: object
  *              properties:
+ *                file:
+ *                  type: string
+ *                  format: binary
  *                name:
  *                  type:string
- *                image:
- *                  type: string
  *                trailer:
  *                  type: string
  *                description:
@@ -97,7 +98,7 @@ router.post('/', Auth.authentication, movieController.create);
  *                runningTime:
  *                  type: number
  *                releaseDate:
- *                  type: date                
+ *                  type: date
  *              example:
  *                name: SHANG-CHI AND THE LEGEND OF THE TEN RINGS
  *      responses:
@@ -106,7 +107,7 @@ router.post('/', Auth.authentication, movieController.create);
  *        "400":
  *          description: Movie not found
  */
-router.put('/:id',Auth.authentication,movieController.update);
+router.put("/:id", Auth.authentication, upload, movieController.update);
 
 /**
  * @swagger
@@ -133,9 +134,9 @@ router.put('/:id',Auth.authentication,movieController.update);
  *          description: Movie deleted
  *        "404":
  *          description: Movie not found
- *          
+ *
  */
-router.delete('/:id',Auth.authentication,movieController.delete);
+router.delete("/:id", Auth.authentication, movieController.delete);
 
 /**
  * @swagger
@@ -146,7 +147,7 @@ router.delete('/:id',Auth.authentication,movieController.delete);
  *        - application/json
  *      tags:
  *        - Movies
- *      parameters:        
+ *      parameters:
  *        - in: path
  *          name: id
  *          description: Movie id
@@ -158,7 +159,7 @@ router.delete('/:id',Auth.authentication,movieController.delete);
  *        "404":
  *          description: Movie not found
  */
-router.get('/:id',movieController.getById);
+router.get("/:id", movieController.getById);
 
 /**
  * @swagger
@@ -174,9 +175,9 @@ router.get('/:id',movieController.getById);
  *          description: Returns a list of all movie
  *
  */
-router.get('/',movieController.list);
+router.get("/", movieController.list);
 
-router.post('/search',movieController.search)
+router.post("/search", movieController.search);
 /**
  * @swagger
  * /api/movie/search:
@@ -195,7 +196,7 @@ router.post('/search',movieController.search)
  *              type: object
  *              properties:
  *                name:
- *                  type:string               
+ *                  type:string
  *              example:
  *                name: SHANG-CHI
  *      responses:
@@ -204,4 +205,4 @@ router.post('/search',movieController.search)
  *        "400":
  *          description: Server error
  */
-module.exports = router
+module.exports = router;

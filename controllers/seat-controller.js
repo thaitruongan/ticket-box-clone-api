@@ -40,6 +40,11 @@ const seatController = {
     try {
       const seat = await Seat.aggregate([
         {
+          $match: {
+            isAlive: true,
+          },
+        },
+        {
           $lookup: {
             from: "rooms",
             localField: "roomId",

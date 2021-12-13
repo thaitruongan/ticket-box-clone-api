@@ -1,13 +1,13 @@
 const router = require("express").Router();
 const bannerController = require("../controllers/banner-controller");
 const Auth = require("../middlewares/auth");
-
+const upload = require("../middlewares/upload");
 
 /**
  * @swagger
  * /api/banner:
  *    post:
- *      summary: Creates a new banner    
+ *      summary: Creates a new banner
  *      produces:
  *        - application/json
  *      tags:
@@ -22,27 +22,24 @@ const Auth = require("../middlewares/auth");
  *        description: Data for new banner
  *        required: true
  *        content:
- *          application/json:
+ *          multipart/form-data:
  *            schema:
  *              type: object
  *              properties:
- *                image:
+ *                file:
  *                  type: string
+ *                  format: binary
  *                movieId:
  *                  type: string
- *                order:
- *                  type: number
  *              example:
- *                image: x.png
  *                movieId: 61ada1b13dcf152655396e6c
- *                order: 1
  *      responses:
  *        "200":
  *          description: Returns created banner
  *        "400":
  *          description: Server error
  */
-router.post("/", Auth.authentication, bannerController.create);
+router.post("/", Auth.authentication, upload, bannerController.create);
 
 /**
  * @swagger
@@ -68,54 +65,24 @@ router.post("/", Auth.authentication, bannerController.create);
  *        description: Data for new banner
  *        required: true
  *        content:
- *          application/json:
+ *          multipart/form-data:
  *            schema:
  *              type: object
  *              properties:
- *                image:
+ *                file:
  *                  type: string
+ *                  format: binary
  *                movieId:
  *                  type: string
- *                order:
- *                  type: number
  *              example:
- *                image: x.png
+ *                movieId: 61ada1b13dcf152655396e6c
  *      responses:
  *        "200":
  *          description: Returns updated banner
  *        "400":
  *          description: Banner not found
  */
-router.put("/:id", Auth.authentication, bannerController.update);
-
-/**
- * @swagger
- * /api/banner/{id}:
- *    delete:
- *      summary: Deletes an individual banner
- *      produces:
- *        - application/json
- *      tags:
- *        - Banners
- *      parameters:
- *        - in: header
- *          name: tbtoken
- *          description: Token authentication
- *          type: string
- *          required: true
- *        - in: path
- *          name: id
- *          description: Banner ID to delete
- *          type: string
- *          required: true
- *      responses:
- *        "200":
- *          description: Banner deleted
- *        "404":
- *          description: Banner not found
- *          
- */
-router.delete("/:id", Auth.authentication, bannerController.delete);
+router.put("/:id", Auth.authentication, upload, bannerController.update);
 
 /**
  * @swagger
@@ -126,7 +93,7 @@ router.delete("/:id", Auth.authentication, bannerController.delete);
  *        - application/json
  *      tags:
  *        - Banners
- *      parameters:        
+ *      parameters:
  *        - in: path
  *          name: id
  *          description: banner id
@@ -155,6 +122,5 @@ router.get("/:id", bannerController.getById);
  *
  */
 router.get("/", bannerController.list);
-
 
 module.exports = router;

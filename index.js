@@ -6,11 +6,15 @@ const path = require("path");
 const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
+const socketIo = require("socket.io");
+const http = require("http");
+
 connectDB();
 const app = express();
+
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(cookieParser());
 
 app.use("/api-docs", require("./routes/docs"));
@@ -32,7 +36,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+const server = http.createServer(app);
+socketIo(server, { cors: { origin: "*" } });
+
 const PORT = process.env.PORT || 5001 || 5001;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Server is running on port", PORT);
 });

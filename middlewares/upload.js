@@ -1,26 +1,43 @@
-const fs = require('fs');
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
 
-module.exports = async function(req, res, next) {
-    try {
-        if(!req.files || Object.keys(req.files).length === 0)
-            return res.status(400).json({msg: "No files were uploaded."})
-            
-        const file = req.files.file;
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_${file.originalname}`.replace(" ", ""));
+  },
+});
 
-        if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/webp'){
-            removeTmp(file.tempFilePath)
-            return res.status(400).json({msg: "File format is incorrect."})
-        }
-
-        next()
-    } catch (err) {
-        console.log("hihi")
-        return res.status(500).json({msg: err.message})
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    console.log("ext", ext);
+    if (ext !== ".jpg" && ext !== ".png" && ext !== ".webp") {
+      cb("Only jpg, png, webp is allowed", false);
     }
-}
+    cb(null, true);
+  },
+}).single("file");
 
-const removeTmp = (path) => {
-    fs.unlink(path, err => {
-        if(err) throw err
-    })
-}
+module.exports = async function (req, res, next) {
+  upload(req, res, (err, status) => {
+    if (err) {
+      return res.status(400).json({
+        message: false,
+        error: err,
+      });
+    }
+
+    if (!res.req.file) return next();
+    req.uploadData = {
+      message: true,
+      url: res.req.file.path,
+      fileName: res.req.file.filename,
+    };
+    next();
+  });
+};

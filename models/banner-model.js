@@ -11,9 +11,9 @@ const BannerSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: [true, "Movie id is required"],
   },
-  order: {
-    type: Number,
-    default: -1,
+  isAlive: {
+    type: Boolean,
+    default: true,
   },
   createBy: {
     type: Schema.Types.ObjectId,

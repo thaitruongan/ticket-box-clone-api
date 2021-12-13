@@ -58,6 +58,10 @@ const ShowtimeSchema = new Schema({
     type: [],
     default: [],
   },
+  isAlive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("showtime", ShowtimeSchema);

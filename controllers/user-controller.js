@@ -1,5 +1,6 @@
 const UserModel = require("../models/user-model");
 const { cache, CacheController } = require("../controllers/cache-controller");
+const PermissionController = require("../controllers/permission-controller");
 const sendOTP = require("./sendOTP");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
@@ -94,6 +95,7 @@ const userController = {
   async Update(req, res) {
     if (!req.user)
       return res.status(400).json({ message: "failure!", data: null });
+    if (req.uploadData) req.body.image = req.uploadData.url;
     const { phoneNumber, email, name, birth, sex, avatar } = req.body;
 
     const user = await UserModel.findOne({
@@ -137,6 +139,55 @@ const userController = {
         birth: updatedUser.birth,
       },
     });
+  },
+
+  async GrantPermission(req, res) {
+    try {
+      const { id, permissions } = req.body;
+      console.log(id, permissions);
+
+      permissions.forEach(async (permission) => {
+        if (
+          !(await PermissionController.isExists({
+            _id: mongoose.Types.ObjectId(permission),
+          }))
+        )
+          return res.status(400).json({
+            message: "fail",
+            error: new Error("Permission is not exists").message,
+          });
+      });
+
+      const user = await UserModel.findOne(mongoose.Types.ObjectId(id));
+
+      if (!user)
+        return res.status(400).json({
+          message: "fail",
+          error: new Error("User is not exists").message,
+        });
+
+      let version = user.version;
+      req.body.updateBy = req.user.id;
+      req.body.updatedAt = new Date();
+      await UserModel.findOneAndUpdate(
+        { _id: mongoose.Types.ObjectId(id) },
+        {
+          $push: {
+            oldVersion: user,
+            permission: req.body.permissions,
+          },
+        },
+        { new: true }
+      );
+
+      const updatedUser = await UserModel.findOne({
+        _id: mongoose.Types.ObjectId(id),
+      });
+
+      res.status(200).json({ message: "success", data: updatedUser });
+    } catch (error) {
+      res.status(400).json({ message: "fail", error: error.message });
+    }
   },
 
   generateToken(id, phone) {

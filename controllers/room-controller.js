@@ -5,7 +5,7 @@ const seatController = require("./seat-controller");
 const roomController = {
   list: async (req, res) => {
     try {
-      const rooms = await Room.find();
+      const rooms = await Room.find({ isAlive: true });
       res.status(200).json({
         message: "Success",
         data: rooms,

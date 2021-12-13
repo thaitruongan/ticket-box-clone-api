@@ -6,9 +6,7 @@ const MovieModel = require("../models/movie-model");
 const ShowtimeController = {
   async List(req, res) {
     try {
-      
-
-      const showtime = await ShowtimeModel.find();
+      const showtime = await ShowtimeModel.find({ isAlive: true });
 
       res.status(200).json({ message: "successfully!", data: showtime });
     } catch (error) {
@@ -87,10 +85,10 @@ const ShowtimeController = {
       );
 
       console.log("check", check);
-      if(!check){
+      if (!check) {
         return res.status(400).json({
-          message:"Room is not empty at this time!"
-        })
+          message: "Room is not empty at this time!",
+        });
       }
       req.body.createBy = req.user.id;
       let showtime = new ShowtimeModel(req.body);
@@ -118,8 +116,7 @@ const ShowtimeController = {
   },
 
   async TimeCheck(timeStart, movieId, roomId) {
-    if(timeStart <= new Date())
-      return false
+    if (timeStart <= new Date()) return false;
     try {
       const movie = await MovieModel.findOne({
         _id: movieId,
@@ -137,7 +134,7 @@ const ShowtimeController = {
       top.setHours(top.getHours() - 5);
 
       let bottom = new Date(timeStart);
-      bottom.setHours(bottom.getHours() + 5);      
+      bottom.setHours(bottom.getHours() + 5);
       const showtime = await ShowtimeModel.aggregate([
         {
           $match: {
