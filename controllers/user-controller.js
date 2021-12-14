@@ -95,7 +95,7 @@ const userController = {
   async Update(req, res) {
     if (!req.user)
       return res.status(400).json({ message: "failure!", data: null });
-    if (req.uploadData) req.body.image = req.uploadData.url;
+    if (req.uploadData) req.body.image = req.uploadData.fileName;
     const { phoneNumber, email, name, birth, sex, avatar } = req.body;
 
     const user = await UserModel.findOne({
@@ -143,7 +143,7 @@ const userController = {
 
   async GrantPermission(req, res) {
     try {
-      console.log(req.body)
+      console.log(req.body);
       const { id, permissions } = req.body;
       console.log(id, permissions);
 

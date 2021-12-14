@@ -31,7 +31,7 @@ module.exports = async function (req, res, next) {
         error: err,
       });
     }
-
+    console.log(res.req.file);
     if (!res.req.file) return next();
     req.uploadData = {
       message: true,

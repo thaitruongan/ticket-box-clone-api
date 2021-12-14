@@ -47,7 +47,13 @@ const upload = require("../middlewares/upload");
  *        "400":
  *          description: Server error
  */
-router.post("/", Auth.authentication, upload,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.create);
+router.post(
+  "/",
+  Auth.authentication,
+  Auth.authorization({ permission: "Superuser", collectionName: "*" }),
+  upload,
+  movieController.create
+);
 
 /**
  * @swagger
@@ -100,7 +106,13 @@ router.post("/", Auth.authentication, upload,Auth.authorization({ permission: "S
  *        "400":
  *          description: Movie not found
  */
-router.put("/:id", Auth.authentication, upload,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.update);
+router.put(
+  "/:id",
+  Auth.authentication,
+  upload,
+  Auth.authorization({ permission: "Superuser", collectionName: "*" }),
+  movieController.update
+);
 
 /**
  * @swagger
@@ -129,7 +141,12 @@ router.put("/:id", Auth.authentication, upload,Auth.authorization({ permission: 
  *          description: Movie not found
  *
  */
-router.delete("/:id", Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }), movieController.delete);
+router.delete(
+  "/:id",
+  Auth.authentication,
+  Auth.authorization({ permission: "Superuser", collectionName: "*" }),
+  movieController.delete
+);
 
 /**
  * @swagger

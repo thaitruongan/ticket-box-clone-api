@@ -29,6 +29,10 @@ app.use("/api/upload", require("./routes/upload-routes"));
 app.use("/api/ticket", require("./routes/ticket-routes"));
 app.use("/api/showtime", require("./routes/showtime-routes"));
 
+app.get("/image/:url", (req, res) => {
+  res.sendFile(path.join(__dirname, `uploads/${req.params.url}`));
+});
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   app.get("*", (req, res) => {

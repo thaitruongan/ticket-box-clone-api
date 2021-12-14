@@ -68,7 +68,7 @@ const bannerController = {
       req.body.createBy = req.user.id;
       const newBanner = new Banner({
         movieId: req.body.movieId,
-        image: req.uploadData.url,
+        image: req.uploadData.fileName,
         createBy: req.user.id,
       });
       const saveBanner = await newBanner.save();
@@ -84,7 +84,7 @@ const bannerController = {
 
   update: async (req, res) => {
     const { id } = req.params;
-    if (req.uploadData) req.body.image = req.uploadData.url;
+    if (req.uploadData) req.body.image = req.uploadData.fileName;
     try {
       const banner = await Banner.findById(id);
       if (!banner) {

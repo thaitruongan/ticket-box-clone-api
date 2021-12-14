@@ -34,13 +34,14 @@ const movieController = {
     }
   },
   create: async (req, res) => {
+    console.log(req.uploadData);
     if (!req.uploadData)
       return res.status(400).json({
         message: "fail",
         error: new Error("Image is required").message,
       });
 
-    req.body.image = req.uploadData.url;
+    req.body.image = req.uploadData.fileName;
     req.body.createBy = req.user.id;
     const newMovie = new Movie(req.body);
     try {
@@ -55,7 +56,7 @@ const movieController = {
   },
   update: async (req, res) => {
     try {
-      if (req.uploadData) req.body.image = req.uploadData.url;
+      if (req.uploadData) req.body.image = req.uploadData.fileName;
       const movie = await Movie.findById(req.params.id);
       if (!movie) {
         return res.status(404).send({
