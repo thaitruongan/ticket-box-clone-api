@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const connectDB = require("./config/db");
 const socketIo = require("socket.io");
 const http = require("http");
+const fs = require("fs");
 
 connectDB();
 const app = express();
@@ -39,6 +40,10 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
   });
 }
+
+fs.mkdir(path.join(__dirname, "uploads"), (err) => {
+  console.log(err);
+});
 
 const server = http.createServer(app);
 socketIo(server, { cors: { origin: "*" } });
