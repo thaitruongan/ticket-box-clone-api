@@ -95,7 +95,7 @@ const userController = {
   async Update(req, res) {
     if (!req.user)
       return res.status(400).json({ message: "failure!", data: null });
-    if (req.uploadData) req.body.image = req.uploadData.fileName;
+    if (req.uploadData) req.body.avatar = req.uploadData.fileName;
     const { phoneNumber, email, name, birth, sex, avatar } = req.body;
 
     const user = await UserModel.findOne({
