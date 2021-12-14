@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-fs.mkdir(path.join(__dirname, "uploads"), (err) => {
+fs.mkdir("/uploads", (err) => {
   console.log(err);
 });
 
