@@ -4,7 +4,8 @@ const path = require("path");
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    fs.mkdirSync(path.join(__dirname, "uploads"), { recursive: true });
+    cb(null, path.join(__dirname, "uploads"));
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}_${file.originalname}`.replace(" ", ""));
