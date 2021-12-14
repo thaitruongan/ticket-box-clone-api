@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-fs.mkdir("/uploads", (err) => {
+fs.mkdir("/app/uploads", (err) => {
   console.log(err);
 });
 
