@@ -170,8 +170,16 @@ const userController = {
       let version = user.version;
       req.body.updateBy = req.user.id;
       req.body.updatedAt = new Date();
+      req.body.version = version + 1;
       await UserModel.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(id) },
+        {
+          $set: {
+            updatedAt: new Date(),
+            updateBy: req.user.id,
+            version: version + 1
+          }
+        },
         {
           $push: {
             oldVersion: user,

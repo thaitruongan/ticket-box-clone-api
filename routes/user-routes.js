@@ -165,6 +165,9 @@ Router.put("/", Auth.authentication, upload, UserController.Update);
  *                  type: array
  *                id:
  *                  type: string
+ *              example:
+ *                permissions: []
+ *                id: ""
  *      responses:
  *        "200":
  *          description: Returns updated grant user
