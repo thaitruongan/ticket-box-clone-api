@@ -4,22 +4,25 @@ const PermissionController = require("../controllers/permission-controller");
 const sendOTP = require("./sendOTP");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const {OAuth2Client} = require('google-auth-library');
-const client = new OAuth2Client("408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(
+  "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com"
+);
 
 const otpCache = new CacheController(300);
 
 async function verify(token) {
   const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
-      // Or, if multiple clients access the backend:
-      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    idToken: token,
+    audience:
+      "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com", // Specify the CLIENT_ID of the app that accesses the backend
+    // Or, if multiple clients access the backend:
+    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
   const payload = ticket.getPayload();
-  const userid = payload['sub'];
+  const userid = payload["sub"];
 
-  return Promise.resolve(payload)
+  return Promise.resolve(payload);
   // If request specified a G Suite domain:
   // const domain = payload['hd'];
 }
@@ -45,7 +48,7 @@ const userController = {
 
   async LoginByPhone(req, res) {
     const { phoneNumber } = req.body;
-    
+
     //register
     const randomString = sendOTP.randomCode(4);
     try {
@@ -66,53 +69,81 @@ const userController = {
       const { otp, phoneNumber } = req.body;
 
       let user = await UserModel.findOne({ phoneNumber: phoneNumber });
+
+      //if (user is not exists => create new user)
       if (user === null) {
-      {
-        if (req.body.facebook)
-        {
+        if (req.body.facebook) {
           //create facebook account
-          user = new UserModel({ phoneNumber: phoneNumber, "facebook.id": req.body.facebook.id, name: req.body.facebook.name });
+          user = new UserModel({
+            phoneNumber: phoneNumber,
+            "facebook.id": req.body.facebook.id,
+            name: req.body.facebook.name,
+          });
         } else if (req.body.google) {
           //create google account
           const payload = await verify(req.body.google);
-          
-          user = new UserModel({ phoneNumber: phoneNumber, "google.id": payload.sub, "google.email": payload.email, avatar: payload.picture, name: payload.name, email: payload.email });
-        } else
+
+          user = new UserModel({
+            phoneNumber: phoneNumber,
+            "google.id": payload.sub,
+            "google.email": payload.email,
+            avatar: payload.picture,
+            name: payload.name,
+            email: payload.email,
+          });
+        } else {
+          //create account by phone-number
           user = new UserModel({ phoneNumber: phoneNumber });
-      }
-        if (user === undefined)
-          return res.status(400).json({ message: "Invalid OTP!" });
+        }
+        // if (user === undefined)
+        //   return res.status(400).json({ message: "Invalid OTP!" });
         if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
           return res
             .status(400)
             .json({ message: "OTP was expired or not true!" });
         user.save();
       } else {
+        // Check account is connect to facebook || google, if not, update connect
         if (req.body.facebook) {
           //check && update
-          if (user.facebook.id === ""){
-            
+          if (user.facebook.id === "") {
             await user.update({
-              "facebook.id" : req.body.facebook.id,
-              name : req.body.facebook.name
-            })
+              "facebook.id": req.body.facebook.id,
+              name: req.body.facebook.name,
+            });
 
-            user = await UserModel.findOne({phoneNumber: req.body.phoneNumber})
-          }else if (user.facebook.id !== req.body.id) {
-            return res.status(400).json({message: "fail", data: new Error("Phone number not match!").message})
+            user = await UserModel.findOne({
+              phoneNumber: req.body.phoneNumber,
+            });
+          } else if (user.facebook.id !== req.body.id) {
+            return res.status(400).json({
+              message: "fail",
+              data: new Error("Phone number not match!").message,
+            });
           }
         } else if (req.body.google) {
-          let payload = await verify(req.body.google)
+          let payload = await verify(req.body.google);
           if (user.google.id === "") {
-            console.log("update google",payload)
-            await user.update({"google.id": payload.sub, "google.email": payload.email, avatar: payload.picture, name: payload.name, email: payload.email})
-            user = await UserModel.findOne({phoneNumber: req.body.phoneNumber})
+            console.log("update google", payload);
+            await user.update({
+              "google.id": payload.sub,
+              "google.email": payload.email,
+              avatar: payload.picture,
+              name: payload.name,
+              email: payload.email,
+            });
+            user = await UserModel.findOne({
+              phoneNumber: req.body.phoneNumber,
+            });
           } else {
             if (user.google.id !== payload.sub)
-              return res.status(400).json({message: "fail", data: new Error("Phone number not match!").message})
+              return res.status(400).json({
+                message: "fail",
+                data: new Error("Phone number not match!").message,
+              });
           }
         }
-        console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
+        console.log(await otpCache.request(`otp${phoneNumber}`));
         if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
           return res.status(400).json({ message: "OTP was expired!" });
       }
@@ -175,6 +206,8 @@ const userController = {
       { new: true }
     );
 
+    updatedUser = await UserModel.findOne({ phoneNumber: phoneNumber });
+
     console.log(updatedUser);
     cache.delete(`list-user`);
     res.status(200).json({
@@ -224,10 +257,8 @@ const userController = {
           $set: {
             updatedAt: new Date(),
             updateBy: req.user.id,
-            version: version + 1
-          }
-        },
-        {
+            version: version + 1,
+          },
           $push: {
             oldVersion: user,
             permission: req.body.permissions,
@@ -242,22 +273,20 @@ const userController = {
 
       res.status(200).json({ message: "success", data: updatedUser });
     } catch (error) {
+      console.log(error);
       res.status(400).json({ message: "fail", error: error.message });
     }
   },
 
-  FacebookLogin: async(req,res) =>{
-    try{
-        const{userId} = req.body;
-        const user = await UserModel.findOne({
-          "facebook.id": userId          
-        })
-        if(!user){
-
-        }
-    }catch(err){
-      
-    }
+  FacebookLogin: async (req, res) => {
+    try {
+      const { userId } = req.body;
+      const user = await UserModel.findOne({
+        "facebook.id": userId,
+      });
+      if (!user) {
+      }
+    } catch (err) {}
   },
 
   generateToken(id, phone) {

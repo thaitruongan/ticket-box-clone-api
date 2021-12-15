@@ -45,6 +45,7 @@ const Auth = {
         },
       ])
         .then((user) => {
+          console.log(user);
           console.log(user[0].permissions, permission);
           if (user.length === 0 || user[0].permissions.length === 0)
             return res

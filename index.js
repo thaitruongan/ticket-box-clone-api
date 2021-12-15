@@ -42,31 +42,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 fs.mkdir("/app/uploads", (err) => {
-  console.log(err);
+  console.log("this folder is already exists");
 });
-
-const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(
-  "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com"
-);
-async function verify() {
-  const ticket = await client.verifyIdToken({
-    idToken:
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6ImMxODkyZWI0OWQ3ZWY5YWRmOGIyZTE0YzA1Y2EwZDAzMjcxNGEyMzciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNDA4MDc1MzAxNzgyLWozOXJ1bGtyMnRlMTdsdHRsMmZwMjlwaWdxcTF1M3F0LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNDA4MDc1MzAxNzgyLWozOXJ1bGtyMnRlMTdsdHRsMmZwMjlwaWdxcTF1M3F0LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTEwMDA3MTcxMjY0OTg1ODQ5NDQxIiwiZW1haWwiOiJsb25naG9oMjIyMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IlZleUluM25JWkZ3eVdLbDlMcmNJNVEiLCJuYW1lIjoiTE9ORyBI4buSIFBIQU4iLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2hKUncwazhfREt4X1VfNmRTVDIxVk9RN3FvZUFjel8wdDRjR3ZPPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkxPTkcgSOG7kiIsImZhbWlseV9uYW1lIjoiUEhBTiIsImxvY2FsZSI6InZpIiwiaWF0IjoxNjM5NDYxMzQxLCJleHAiOjE2Mzk0NjQ5NDEsImp0aSI6ImNkOGFhNThlYTM0OTk3MTY2OTljM2VhMmZlNzQ1YTVkYWJjZTZkYjQifQ.CIKdSuABXFTTLAyOGZwmBihZKCUxZMZiTGQjL2kIww3aDJTJA9xMXrx31xuWYlMnRXyLVyR0u-z8pT2jKWMDczn8IVWKa2cDCWpK-CXO3aZEdUOfpDqvaqsRWbuWXGtM1A8GpDObYejOpcS4aVM5tldbSPYTUr9V0qWTq-RmPgtqaH-H571EUtaDDeQRNtPQS8xg4Gezdfs57XnzEp7ATlo87vgWIEN1sRpi6DB6BYkbiwWkRmvs4jbkpjSd1j2ReqvES89-SmfRP5E9m5Vhnn9XRF-qoAz7yt77o3lYU_CHvLO_ZTbJ0GRBkFoXeJzsegaqzv2PNcwr4nOZe04bZQ",
-    audience:
-      "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com", // Specify the CLIENT_ID of the app that accesses the backend
-    // Or, if multiple clients access the backend:
-    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-  });
-  const payload = ticket.getPayload();
-  const userid = payload["sub"];
-  // If request specified a G Suite domain:
-  // const domain = payload['hd'];
-  console.log(ticket);
-  console.log(userid);
-  console.log(payload);
-}
-verify().catch(console.error);
 
 const server = http.createServer(app);
 socketIo(server, { cors: { origin: "*" } });
