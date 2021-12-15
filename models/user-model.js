@@ -76,13 +76,21 @@ const UserSchema = new Schema({
   },
 
   facebook: {
-    type: {},
-    default: {},
+    id:{
+      type:String,
+      default:""
+    }
   },
 
   google: {
-    type: {},
-    default: {},
+    id:{
+      type:String,
+      default:""
+    },
+    email:{
+      type: String,
+      default:""
+    }
   },
 
   isAlive: {

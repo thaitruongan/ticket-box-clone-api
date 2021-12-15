@@ -4,8 +4,25 @@ const PermissionController = require("../controllers/permission-controller");
 const sendOTP = require("./sendOTP");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client("408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com");
 
 const otpCache = new CacheController(300);
+
+async function verify(token) {
+  const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: "408075301782-j39rulkr2te17lttl2fp29pigqq1u3qt.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+      // Or, if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+  });
+  const payload = ticket.getPayload();
+  const userid = payload['sub'];
+
+  return Promise.resolve(payload)
+  // If request specified a G Suite domain:
+  // const domain = payload['hd'];
+}
 
 const userController = {
   async List(req, res) {
@@ -28,9 +45,7 @@ const userController = {
 
   async LoginByPhone(req, res) {
     const { phoneNumber } = req.body;
-    let user = await UserModel.findOne({
-      phoneNumber: phoneNumber,
-    });
+    
     //register
     const randomString = sendOTP.randomCode(4);
     try {
@@ -47,28 +62,60 @@ const userController = {
   },
 
   async VerifyOTP(req, res) {
-    console.log(req.body);
     try {
       const { otp, phoneNumber } = req.body;
 
       let user = await UserModel.findOne({ phoneNumber: phoneNumber });
       if (user === null) {
-        user = new UserModel({ phoneNumber: phoneNumber });
+      {
+        if (req.body.facebook)
+        {
+          //create facebook account
+          user = new UserModel({ phoneNumber: phoneNumber, "facebook.id": req.body.facebook.id, name: req.body.facebook.name });
+        } else if (req.body.google) {
+          //create google account
+          const payload = await verify(req.body.google);
+          
+          user = new UserModel({ phoneNumber: phoneNumber, "google.id": payload.sub, "google.email": payload.email, avatar: payload.picture, name: payload.name, email: payload.email });
+        } else
+          user = new UserModel({ phoneNumber: phoneNumber });
+      }
         if (user === undefined)
           return res.status(400).json({ message: "Invalid OTP!" });
-
-        console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
         if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
           return res
             .status(400)
             .json({ message: "OTP was expired or not true!" });
         user.save();
       } else {
+        if (req.body.facebook) {
+          //check && update
+          if (user.facebook.id === ""){
+            
+            await user.update({
+              "facebook.id" : req.body.facebook.id,
+              name : req.body.facebook.name
+            })
+
+            user = await UserModel.findOne({phoneNumber: req.body.phoneNumber})
+          }else if (user.facebook.id !== req.body.id) {
+            return res.status(400).json({message: "fail", data: new Error("Phone number not match!").message})
+          }
+        } else if (req.body.google) {
+          let payload = await verify(req.body.google)
+          if (user.google.id === "") {
+            console.log("update google",payload)
+            await user.update({"google.id": payload.sub, "google.email": payload.email, avatar: payload.picture, name: payload.name, email: payload.email})
+            user = await UserModel.findOne({phoneNumber: req.body.phoneNumber})
+          } else {
+            if (user.google.id !== payload.sub)
+              return res.status(400).json({message: "fail", data: new Error("Phone number not match!").message})
+          }
+        }
         console.log(await otpCache.request(`otp${phoneNumber}`), "hihi");
         if (otp + "" !== (await otpCache.request(`otp${phoneNumber}`)))
           return res.status(400).json({ message: "OTP was expired!" });
       }
-
       if (!user.isAlive)
         return res.status(400).json({ message: "You got banned", data: null });
 
@@ -196,6 +243,20 @@ const userController = {
       res.status(200).json({ message: "success", data: updatedUser });
     } catch (error) {
       res.status(400).json({ message: "fail", error: error.message });
+    }
+  },
+
+  FacebookLogin: async(req,res) =>{
+    try{
+        const{userId} = req.body;
+        const user = await UserModel.findOne({
+          "facebook.id": userId          
+        })
+        if(!user){
+
+        }
+    }catch(err){
+      
     }
   },
 
