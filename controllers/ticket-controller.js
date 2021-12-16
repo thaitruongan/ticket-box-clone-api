@@ -98,6 +98,7 @@ const TicketController = {
   async Buy(uid, ids) {
     for (let i = 0; i < ids.length; i++) {
       const ticket = await TicketModel.findById(ids[i]);
+      if (!ticket) return Promise.reject(Error("Ticket not found!"));
       if (ticket.userId !== null)
         return Promise.reject(Error("Ticket is owned by another user"));
     }
