@@ -12,7 +12,7 @@ const ShowtimeController = {
         },
         {
           $lookup: {
-            from: "room",
+            from: "rooms",
             localField: "roomId",
             foreignField: "_id",
             as: "room",
