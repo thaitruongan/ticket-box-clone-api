@@ -44,10 +44,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-fs.mkdir("/app/uploads", (err) => {
-  console.log("this folder is already exists");
-});
-
 const server = http.createServer(app);
 const socketIo = io(server, { cors: { origin: "*" } });
 
