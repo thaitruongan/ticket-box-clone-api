@@ -41,42 +41,11 @@ const ShowtimeController = {
           },
         },
         {
-          $unwind: {
-            path: "$movie",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
           $lookup: {
-            from: "tickets",
-            localField: "_id",
-            foreignField: "showtimeId",
-            as: "tickets",
-          },
-        },
-        {
-          $unwind: {
-            path: "$tickets",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "seats",
-            localField: "tickets.seatId",
+            from: "rooms",
+            localField: "roomId",
             foreignField: "_id",
-            as: "tickets.seat",
-          },
-        },
-        {
-          $group: {
-            _id: "$_id",
-            movie: { $first: "$movie" },
-            timeStart: { $first: "$timeStart" },
-            roomId: { $first: "$roomId" },
-            standardPrice: { $first: "$standardPrice" },
-            vipPrice: { $first: "$vipPrice" },
-            tickets: { $push: "$tickets" },
+            as: "room",
           },
         },
       ]);
