@@ -6,7 +6,7 @@ const path = require("path");
 const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
-const socketIo = require("socket.io");
+const io = require("socket.io");
 const http = require("http");
 const fs = require("fs");
 
@@ -46,7 +46,7 @@ fs.mkdir("/app/uploads", (err) => {
 });
 
 const server = http.createServer(app);
-socketIo(server, { cors: { origin: "*" } });
+const socketIo = io(server, { cors: { origin: "*" } });
 
 let data = [
   {
