@@ -158,12 +158,7 @@ const userController = {
       res.status(200).json({
         message: "success!",
         token: token,
-        data: {
-          name: user.name,
-          sex: user.sex,
-          avatar: user.avatar,
-          birth: user.birth,
-        },
+        user
       });
     } catch (error) {
       res.status(400).send({ message: "fail", error: error });
