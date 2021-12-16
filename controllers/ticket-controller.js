@@ -26,10 +26,8 @@ const TicketController = {
     }
   },
 
-  async GetByShowtimeId(req, res) {
+  async GetByShowtimeId(id) {
     try {
-      const { id } = req.params;
-
       const tickets = await TicketModel.aggregate([
         {
           $match: {
@@ -71,10 +69,30 @@ const TicketController = {
         },
       ]);
 
-      res.status(200).json({ message: "success", data: tickets });
+      return Promise.resolve(tickets);
     } catch (error) {
-      res.status(400).json({ message: "fail", data: error.message });
+      console.log(error);
+      return Promise.reject(error);
     }
+  },
+
+  async ChangeStatus(id, status) {
+    try {
+      const ticket = await TicketModel.findById(id);
+      if (!ticket) return Promise.reject(new Error("Ticket not found!"));
+
+      await ticket.update({
+        status: status,
+      });
+
+      return Promise.resolve(true);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+
+  async Disconnect(id) {
+    await TicketModel.updateMany({ status: id }, { status: "free" });
   },
 };
 
