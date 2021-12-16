@@ -94,6 +94,22 @@ const TicketController = {
   async Disconnect(id) {
     await TicketModel.updateMany({ status: id }, { status: "free" });
   },
+
+  async Buy(uid, ids) {
+    for (let i = 0; i < ids.length; i++) {
+      const ticket = await TicketModel.findById(ids[i]);
+      if (ticket.userId !== null)
+        return Promise.reject(Error("Ticket is owned by another user"));
+    }
+    console.log("update rui ne");
+    await TicketModel.updateMany(
+      { _id: { $in: ids } },
+      { $set: { userId: mongoose.Types.ObjectId(uid), status: "sold" } }
+    );
+
+    console.log("update rui ne");
+    return Promise.resolve(true);
+  },
 };
 
 module.exports = TicketController;

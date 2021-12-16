@@ -31,6 +31,7 @@ app.use("/api/seat", require("./routes/seat-routes"));
 app.use("/api/upload", require("./routes/upload-routes"));
 app.use("/api/ticket", require("./routes/ticket-routes"));
 app.use("/api/showtime", require("./routes/showtime-routes"));
+app.use("/api/payment", require("./routes/bill-routes"));
 
 app.get("/image/:url", (req, res) => {
   res.sendFile(path.join(__dirname, `uploads/${req.params.url}`));

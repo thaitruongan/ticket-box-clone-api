@@ -12,14 +12,12 @@ const billSchema = new Schema({
     default: new Date(),
   },
 
-  details: [
-    {
-      ticketId: String,
-      price: number,
-    },
-  ],
+  tickets: {
+    type: [Schema.Types.ObjectId],
+    require: [true, "Tickets is require"],
+  },
 
-  totalPrice: number,
+  totalPrice: Number,
 });
 
-module.exports = billSchema;
+module.exports = mongoose.model("bill", billSchema);
