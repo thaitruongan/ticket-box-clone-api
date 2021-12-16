@@ -6,7 +6,19 @@ const MovieModel = require("../models/movie-model");
 const ShowtimeController = {
   async List(req, res) {
     try {
-      const showtime = await ShowtimeModel.find({ isAlive: true });
+      const showtime = await ShowtimeModel.aggregate([
+        {
+          $match: { isAlive: true },
+        },
+        {
+          $lookup: {
+            from: "room",
+            localField: "roomId",
+            foreignField: "_id",
+            as: "room",
+          },
+        },
+      ]);
 
       res.status(200).json({ message: "successfully!", data: showtime });
     } catch (error) {
