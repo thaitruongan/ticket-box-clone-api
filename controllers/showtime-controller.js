@@ -2,6 +2,7 @@ const ShowtimeModel = require("../models/showtime-model");
 const TicketController = require("./ticket-controller");
 const mongoose = require("mongoose");
 const MovieModel = require("../models/movie-model");
+const RoomModel = require("../models/room-model");
 
 const ShowtimeController = {
   async List(req, res) {
@@ -90,6 +91,15 @@ const ShowtimeController = {
   async Create(req, res) {
     try {
       let tmp = new Date(req.body.timeStart);
+      const _room = await RoomModel.findById(req.body.roomId);
+      const _movie = await MovieModel.findById(req.body.movieId);
+
+      if (!_room || !_movie)
+        return res.status(400).json({
+          message: "fail",
+          error: new Error("Invalid room or movie!").message,
+        });
+
       let check = await ShowtimeController.TimeCheck(
         tmp,
         req.body.movieId,
