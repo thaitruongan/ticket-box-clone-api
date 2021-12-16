@@ -48,6 +48,64 @@ fs.mkdir("/app/uploads", (err) => {
 const server = http.createServer(app);
 socketIo(server, { cors: { origin: "*" } });
 
+socketIo.on("connection", (socket) => {
+  console.log("New client connected" + socket.id);
+
+  socket.emit("get-data", data);
+
+  socket.emit("welcome", socket.id);
+  socket.on("id", (_data) => {
+    for (let i = 0; i < _data.length; i++) {
+      for (let j = 0; j < data.length; j++) {
+        if (_data[i]._id === data[j]._id) {
+          data[j] = _data[i];
+        }
+      }
+    }
+
+    socket.broadcast.emit("get-data", data);
+  });
+  socket.on("pick-new-ticket", function (_data) {
+    //change ticket to hold
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]._id === _data.ticket) {
+        data[i].status = _data.id;
+        console.log("pick", data[i]);
+        break;
+      }
+    }
+
+    //return data for this client
+    socket.broadcast.emit("get-data", data);
+  });
+
+  socket.on("cancel-ticket", function (id) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]._id === id) {
+        data[i].status = "free";
+        break;
+      }
+    }
+
+    socket.emit("get-data", data);
+    socket.broadcast.emit("get-data", data);
+  });
+
+  socket.on("ClientSendDataRemove", function (data) {
+    socketIo.sockets.emit("serverSendDataRemove", data);
+  });
+
+  socket.on("Timeout", function (data) {
+    console.log("time out");
+    console.log(data);
+    socketIo.sockets.emit("ServerSendDataTimeOut", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`Client disconnected`);
+  });
+});
+
 const PORT = process.env.PORT || 5001 || 5001;
 server.listen(PORT, () => {
   console.log("Server is running on port", PORT);
