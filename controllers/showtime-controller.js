@@ -58,14 +58,21 @@ const ShowtimeController = {
   },
 
   async GetByFilmIdAndDate(req, res) {
+    const day = req.body.date;
+    let start = new Date(day);
+    start.setHours(0);
+    start.setMinutes(0);
+    let end = new Date(day);
+    end.setHours(23);
+    end.setMinutes(59);
     try {
       const showtime = await ShowtimeModel.aggregate([
         {
           $match: {
             movieId: mongoose.Types.ObjectId(req.params.id),
             timeStart: {
-              $gt: "",
-              $lt: "",
+              $gt: start,
+              $lt: end,
             },
           },
         },
