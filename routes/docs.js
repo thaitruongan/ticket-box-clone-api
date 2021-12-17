@@ -23,6 +23,7 @@ const swaggerOptions = {
     "./routes/room-routes.js",
     "./routes/seat-routes.js",
     "./routes/showtime-routes.js",
+    "./routes/bill-routes.js"
   ],
 };
 const specs = swagger(swaggerOptions);
