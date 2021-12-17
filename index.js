@@ -119,6 +119,15 @@ socketIo.on("connection", (socket) => {
     getData(data.showtimeId);
   });
 
+  socket.on("pay", (data) => {
+    try {
+      await TicketController.ChangeStatus(data.ticketId, data.userId);
+      socket.emit("pay", { status: "success" });
+    } catch (error) {
+      socket.emit("pay", { status: "error", error: error.message });
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log(`Client disconnected`);
     console.log(socket.id);

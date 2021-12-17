@@ -158,7 +158,7 @@ const userController = {
       res.status(200).json({
         message: "success!",
         token: token,
-        user
+        user,
       });
     } catch (error) {
       res.status(400).send({ message: "fail", error: error });
@@ -272,13 +272,46 @@ const userController = {
 
   FacebookLogin: async (req, res) => {
     try {
-      const { userId } = req.body;
       const user = await UserModel.findOne({
-        "facebook.id": userId,
+        "facebook.id": req.body.facebook.id,
       });
       if (!user) {
+        return res.status(200).json({ status: "fail" });
       }
-    } catch (err) {}
+      const token = userController.generateToken(user._id, user.phoneNumber);
+      cache.set(`user${user.phoneNumber}`, token);
+      res.status(200).json({ status: "success", token: token, data: user });
+    } catch (err) {
+      res.status(400).json({ status: "error", message: err.message });
+    }
+  },
+
+  GoogleLogin: async (req, res) => {
+    try {
+      const payload = await verify(req.body.google);
+      const user = await UserModel.findOne({
+        "google.id": payload.sub,
+        "google.email": payload.email,
+      });
+      if (!user) {
+        return res.status(200).json({ status: "fail" });
+      }
+      const token = userController.generateToken(user._id, user.phoneNumber);
+      cache.set(`user${user.phoneNumber}`, token);
+      res.status(200).json({ status: "success", token: token, data: user });
+    } catch (err) {
+      res.status(400).json({ status: "error", message: err.message });
+    }
+  },
+
+  async VerifyToken(req, res) {
+    if (!req.user) return res.status(400).json({ message: "Invalid token" });
+
+    const user = await UserModel.findById(req.user.id);
+
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    res.status(200).json({ message: "success", data: user });
   },
 
   generateToken(id, phone) {

@@ -152,7 +152,7 @@ Router.put("/", Auth.authentication, upload, UserController.Update);
  *          name: tbtoken
  *          description: Token authentication
  *          type: string
- *          required: true 
+ *          required: true
  *      requestBody:
  *        description: Grant data for user
  *        required: true
@@ -160,7 +160,7 @@ Router.put("/", Auth.authentication, upload, UserController.Update);
  *          application/json:
  *            schema:
  *              type: object
- *              properties:                 
+ *              properties:
  *                permissions:
  *                  type: array
  *                id:
@@ -177,5 +177,11 @@ Router.put(
   Auth.authentication,
   UserController.GrantPermission
 );
+
+Router.get("/verify", Auth.authentication, UserController.VerifyToken);
+
+Router.post("/google", UserController.GoogleLogin);
+
+Router.post("/facebook", UserController.FacebookLogin);
 
 module.exports = Router;
