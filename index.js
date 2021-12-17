@@ -121,7 +121,9 @@ socketIo.on("connection", (socket) => {
 
   socket.on("pay", (data) => {
     try {
-      await TicketController.ChangeStatus(data.ticketId, data.userId);
+      (async () => {
+        await TicketController.ChangeStatus(data.ticketId, data.userId);
+      })();
       socket.emit("pay", { status: "success" });
     } catch (error) {
       socket.emit("pay", { status: "error", error: error.message });

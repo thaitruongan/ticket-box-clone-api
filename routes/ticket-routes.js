@@ -1,4 +1,5 @@
 const Router = require("express").Router();
+const Auth = require("../middlewares/auth");
 const TicketController = require("../controllers/ticket-controller");
 
 // /**
@@ -23,5 +24,11 @@ const TicketController = require("../controllers/ticket-controller");
 //  *          description: Showtime not found
 //  */
 // Router.get("/:id", TicketController.GetByShowtimeId);
+
+Router.post(
+  "/change-ticket-status",
+  Auth.authentication,
+  TicketController.ChangeStatusRoute
+);
 
 module.exports = Router;

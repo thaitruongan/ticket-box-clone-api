@@ -28,6 +28,72 @@ const ShowtimeController = {
     }
   },
 
+  async GetByFilmId(req, res) {
+    try {
+      const showtime = await ShowtimeModel.aggregate([
+        { $match: { movieId: mongoose.Types.ObjectId(req.params.id) } },
+        {
+          $lookup: {
+            from: "movies",
+            localField: "movieId",
+            foreignField: "_id",
+            as: "movie",
+          },
+        },
+        {
+          $lookup: {
+            from: "rooms",
+            localField: "roomId",
+            foreignField: "_id",
+            as: "room",
+          },
+        },
+      ]);
+
+      res.status(200).json({ message: "successfully!", data: showtime });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ message: "failure!", error: error });
+    }
+  },
+
+  async GetByFilmIdAndDate(req, res) {
+    try {
+      const showtime = await ShowtimeModel.aggregate([
+        {
+          $match: {
+            movieId: mongoose.Types.ObjectId(req.params.id),
+            timeStart: {
+              $gt: "",
+              $lt: "",
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "movies",
+            localField: "movieId",
+            foreignField: "_id",
+            as: "movie",
+          },
+        },
+        {
+          $lookup: {
+            from: "rooms",
+            localField: "roomId",
+            foreignField: "_id",
+            as: "room",
+          },
+        },
+      ]);
+
+      res.status(200).json({ message: "successfully!", data: showtime });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ message: "failure!", error: error });
+    }
+  },
+
   async GetById(req, res) {
     try {
       const showtime = await ShowtimeModel.aggregate([

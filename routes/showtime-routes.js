@@ -27,7 +27,7 @@ Router.get("/", ShowtimeController.List);
  *        - application/json
  *      tags:
  *        - Showtimes
- *      parameters:        
+ *      parameters:
  *        - in: path
  *          name: id
  *          description: Showtime id
@@ -45,7 +45,7 @@ Router.get("/:id", ShowtimeController.GetById);
  * @swagger
  * /api/showtime:
  *    post:
- *      summary: Creates a new showtime  
+ *      summary: Creates a new showtime
  *      produces:
  *        - application/json
  *      tags:
@@ -73,19 +73,28 @@ Router.get("/:id", ShowtimeController.GetById);
  *                standardPrice:
  *                  type: number
  *                vipPrice:
- *                  type: number                   
+ *                  type: number
  *              example:
  *                  movieId: 61aedafbc5c70c6293511675
  *                  timeStart: 10-12-2021
  *                  roomId: 61b2d0135b2065af8e65c4f7
  *                  standardPrice: 30000
- *                  vipPrice: 50000     
+ *                  vipPrice: 50000
  *      responses:
  *        "200":
  *          description: Returns created show time
  *        "400":
  *          description: Server error
  */
-Router.post("/", Auth.authentication,Auth.authorization({ permission: "Superuser", collectionName: "*" }), ShowtimeController.Create);
+Router.post(
+  "/",
+  Auth.authentication,
+  Auth.authorization({ permission: "Superuser", collectionName: "*" }),
+  ShowtimeController.Create
+);
+
+Router.get("/movie/:id", ShowtimeController.GetByFilmId);
+
+Router.post("/movie/:id", ShowtimeController.GetByFilmIdAndDate);
 
 module.exports = Router;

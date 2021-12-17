@@ -95,6 +95,18 @@ const TicketController = {
     await TicketModel.updateMany({ status: id }, { status: "free" });
   },
 
+  async ChangeStatusRoute(req, res) {
+    try {
+      if (!req.user) return res.status(400).json({ message: "Invalid user" });
+
+      await TicketController.Disconnect(req.user.id);
+
+      res.status(200).json({ message: "success" });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  },
+
   async Buy(uid, ids) {
     for (let i = 0; i < ids.length; i++) {
       const ticket = await TicketModel.findById(ids[i]);
