@@ -8,8 +8,7 @@ const swaggerOptions = {
     info: {
       title: "Ticket Box Clone API",
       version: "1.0.0",
-      description:
-        "Backend API to manage Ticket Box Clone API",
+      description: "Backend API to manage Ticket Box Clone API",
       license: {
         name: "MIT",
         url: "https://choosealicense.com/licenses/mit/",
@@ -24,8 +23,8 @@ const swaggerOptions = {
     "./routes/room-routes.js",
     "./routes/seat-routes.js",
     "./routes/showtime-routes.js",
-    "./routes/ticket-routes.js"
-],
+    "./routes/bill-routes.js"
+  ],
 };
 const specs = swagger(swaggerOptions);
 router.use("/", swaggerUi.serve);

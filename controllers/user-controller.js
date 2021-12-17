@@ -233,9 +233,9 @@ const userController = {
             error: new Error("Permission is not exists").message,
           });
       });
-
-      const user = await UserModel.findOne(mongoose.Types.ObjectId(id));
-
+      const user = await UserModel.findOne({
+        _id: mongoose.Types.ObjectId(id),
+      });
       if (!user)
         return res.status(400).json({
           message: "fail",
@@ -243,9 +243,6 @@ const userController = {
         });
 
       let version = user.version;
-      req.body.updateBy = req.user.id;
-      req.body.updatedAt = new Date();
-      req.body.version = version + 1;
       await UserModel.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(id) },
         {

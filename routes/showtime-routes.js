@@ -27,6 +27,12 @@ Router.get("/", ShowtimeController.List);
  *        - application/json
  *      tags:
  *        - Showtimes
+ *      parameters:        
+ *        - in: path
+ *          name: id
+ *          description: Showtime id
+ *          type: string
+ *          required: true
  *      responses:
  *        "200":
  *          description: Returns a an showtime along with its data

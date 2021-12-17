@@ -46,6 +46,7 @@ const movieController = {
     const newMovie = new Movie(req.body);
     try {
       const saveMovie = await newMovie.save();
+      cache.delete(`list-movie`);
       res.status(200).json(saveMovie);
     } catch (err) {
       res.status(400).json({
