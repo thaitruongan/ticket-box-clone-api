@@ -172,7 +172,7 @@ const userController = {
     const user = await UserModel.findOne({
       _id: mongoose.Types.ObjectId(req.user.id),
     });
-    console.log(user, req.user.id);
+    console.log(req.user.id);
     if (user === null)
       return res.status(400).json({
         message: "failure!",
@@ -187,7 +187,7 @@ const userController = {
       avatar: avatar,
       version: version + 1,
       updatedAt: new Date(),
-      updatedBy: mongoose.Types.ObjectId(req.user.id),
+      updateBy: mongoose.Types.ObjectId(req.user.id),
       $push: {
         oldVersion: user,
       },
@@ -203,7 +203,6 @@ const userController = {
       _id: mongoose.Types.ObjectId(req.user.id),
     });
 
-    console.log(updatedUser);
     cache.delete(`list-user`);
     res.status(200).json({
       message: "User update successfully!",
