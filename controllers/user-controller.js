@@ -194,7 +194,7 @@ const userController = {
       },
     };
 
-    const updatedUser = await UserModel.findOneAndUpdate(
+    let updatedUser = await UserModel.findOneAndUpdate(
       { _id: req.user.id },
       update,
       { new: true }
