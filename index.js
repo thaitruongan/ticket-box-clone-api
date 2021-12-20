@@ -43,7 +43,8 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
   });
 }
-
+const mailer = require("./util/mailer");
+mailer("ben.anthai99@gmail.com", ["1", "2", "3", "4"]);
 const server = http.createServer(app);
 const socketIo = io(server, { cors: { origin: "*" } });
 
