@@ -52,12 +52,10 @@ const userController = {
     //register
     const randomString = sendOTP.randomCode(4);
     try {
-      await sendOTP.sendOTP(randomString, phoneNumber);
+      // await sendOTP.sendOTP(randomString, phoneNumber);
       otpCache.set(`otp${phoneNumber}`, randomString);
       console.log(otpCache.request(`otp${phoneNumber}`));
-      return res
-        .status(200)
-        .json({ message: "success!", data: "Sending OTP..." });
+      return res.status(200).json({ message: "success!", data: randomString });
     } catch (error) {
       console.log(error);
       return res.status(400).json({ message: "failure!", data: error.message });
