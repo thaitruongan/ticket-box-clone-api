@@ -125,8 +125,6 @@ Router.post("/otp", UserController.VerifyOTP);
  *                  type: date
  *                sex:
  *                  type: string
- *                avatar:
- *                  type: string
  *      responses:
  *        "200":
  *          description: Returns updated user
