@@ -172,6 +172,7 @@ const userController = {
     const user = await UserModel.findOne({
       _id: mongoose.Types.ObjectId(req.user.id),
     });
+    console.log(user, req.user.id);
     if (user === null)
       return res.status(400).json({
         message: "failure!",
@@ -193,12 +194,14 @@ const userController = {
     };
 
     let updatedUser = await UserModel.findOneAndUpdate(
-      { _id: req.user.id },
+      { _id: mongoose.Types.ObjectId(req.user.id) },
       update,
       { new: true }
     );
 
-    updatedUser = await UserModel.findOne({ _id: req.user.id });
+    updatedUser = await UserModel.findOne({
+      _id: mongoose.Types.ObjectId(req.user.id),
+    });
 
     console.log(updatedUser);
     cache.delete(`list-user`);
