@@ -195,12 +195,12 @@ const userController = {
     };
 
     const updatedUser = await UserModel.findOneAndUpdate(
-      { phoneNumber: phoneNumber },
+      { _id: req.user.id },
       update,
       { new: true }
     );
 
-    updatedUser = await UserModel.findOne({ phoneNumber: phoneNumber });
+    updatedUser = await UserModel.findOne({ _id: req.user.id });
 
     console.log(updatedUser);
     cache.delete(`list-user`);
