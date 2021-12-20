@@ -106,11 +106,6 @@ Router.post("/otp", UserController.VerifyOTP);
  *          description: Token authentication
  *          type: string
  *          required: true
- *        - in: path
- *          name: id
- *          description: user ID
- *          type: string
- *          required: true
  *      requestBody:
  *        description: Data for user
  *        required: true

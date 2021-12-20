@@ -169,11 +169,10 @@ const userController = {
     if (!req.user)
       return res.status(400).json({ message: "failure!", data: null });
     if (req.uploadData) req.body.avatar = req.uploadData.fileName;
-    const { phoneNumber, email, name, birth, sex, avatar } = req.body;
+    const { email, name, birth, sex, avatar } = req.body;
 
     const user = await UserModel.findOne({
       _id: mongoose.Types.ObjectId(req.user.id),
-      phoneNumber: phoneNumber,
     });
     if (user === null)
       return res.status(400).json({
