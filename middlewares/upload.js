@@ -26,9 +26,10 @@ const upload = multer({
 module.exports = async function (req, res, next) {
   upload(req, res, (err, status) => {
     if (err) {
+      console.log(err);
       return res.status(400).json({
         message: false,
-        error: err,
+        error: err.message,
       });
     }
     console.log(res.req.file);
