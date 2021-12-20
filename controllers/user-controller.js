@@ -207,12 +207,7 @@ const userController = {
     cache.delete(`list-user`);
     res.status(200).json({
       message: "User update successfully!",
-      data: {
-        name: updatedUser.name,
-        sex: updatedUser.sex,
-        avatar: updatedUser.avatar,
-        birth: updatedUser.birth,
-      },
+      data: user,
     });
   },
 
