@@ -29,7 +29,7 @@ app.use("/api/permission", require("./routes/permission-routes"));
 app.use("/api/room", require("./routes/room-routes"));
 app.use("/api/seat", require("./routes/seat-routes"));
 // app.use("/api/upload", require("./routes/upload-routes"));
-// app.use("/api/ticket", require("./routes/ticket-routes"));
+app.use("/api/ticket", require("./routes/ticket-routes"));
 app.use("/api/showtime", require("./routes/showtime-routes"));
 app.use("/api/payment", require("./routes/bill-routes"));
 

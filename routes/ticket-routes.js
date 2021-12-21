@@ -25,7 +25,7 @@ const TicketController = require("../controllers/ticket-controller");
 //  */
 // Router.get("/:id", TicketController.GetByShowtimeId);
 
-Router.post(
+Router.get(
   "/change-ticket-status",
   Auth.authentication,
   TicketController.ChangeStatusRoute
