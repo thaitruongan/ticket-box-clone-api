@@ -36,7 +36,7 @@ app.use("/api/payment", require("./routes/bill-routes"));
 app.get("/image/:url", (req, res) => {
   res.sendFile(path.join(__dirname, `uploads/${req.params.url}`));
 });
-
+//
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   app.get("*", (req, res) => {
