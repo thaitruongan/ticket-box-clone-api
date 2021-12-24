@@ -2,7 +2,6 @@ const router = require("express").Router();
 const BillController = require("../controllers/bill-controller");
 const Auth = require("../middlewares/auth");
 
-
 /**
  * @swagger
  * /api/payment:
@@ -45,5 +44,7 @@ const Auth = require("../middlewares/auth");
  *          description: Server error
  */
 router.post("/", Auth.authentication, BillController.Payment);
+
+router.get("/", Auth.authentication, BillController.Get);
 
 module.exports = router;
